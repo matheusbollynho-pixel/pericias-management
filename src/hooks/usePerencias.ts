@@ -102,7 +102,7 @@ export function usePerencias() {
 
   const createPericia = useMutation({
     mutationFn: async (pericia: Omit<Pericia, 'id' | 'created_at' | 'updated_at'>) => {
-      // Monta payload compatível com o schema da tabela (sem owner/id)
+      // Payload com APENAS os campos que existem na tabela pericias
       const dbPayload: any = {
         processo_numero: pericia.processo_numero,
         vara: pericia.vara,
@@ -133,6 +133,7 @@ export function usePerencias() {
 
       if (supabase) {
         try {
+          // NÃO especifica columns - deixa o Supabase inferir automaticamente
           const { data, error } = await supabase
             .from('pericias')
             .insert([dbPayload])
@@ -143,6 +144,8 @@ export function usePerencias() {
           }
           if (error) {
             console.error('Erro Supabase insert:', error.message);
+            // Log detalhado do erro
+            console.error('Erro completo:', error);
           }
         } catch (error) {
           console.error('Erro ao salvar no Supabase:', error);
@@ -210,6 +213,7 @@ export function usePerencias() {
           }
           if (error) {
             console.error('Erro Supabase update:', error.message);
+            console.error('Erro completo:', error);
           }
         } catch (error) {
           console.error('Erro ao atualizar no Supabase:', error);
