@@ -62,7 +62,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         )}
 
         {/* User Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
           {USERS.map((user) => (
             <button
               key={user.email}
@@ -100,11 +100,4 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     </div>
   );
 }
-          <p className="text-xs text-gray-500 text-center">
-            Dados de teste disponíveis para demonstração
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 }
