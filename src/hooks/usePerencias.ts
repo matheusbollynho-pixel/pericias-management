@@ -133,18 +133,27 @@ export function usePerencias() {
 
       if (supabase) {
         try {
-          // NÃO especifica columns - deixa o Supabase inferir automaticamente
-          const { data, error } = await supabase
+          // Insere sem fazer select (evita erro com colunas não-existent)
+          const { error } = await supabase
             .from('pericias')
-            .insert([dbPayload])
-            .select()
-            .single();
-          if (!error && data) {
-            return data as Pericia;
+            .insert([dbPayload]);
+          
+          if (!error) {
+            // Faz um select imediatamente após para retornar os dados salvos
+            const { data: savedData } = await supabase
+              .from('pericias')
+              .select('id, created_at, updated_at, owner')
+              .eq('owner', userEmail)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single();
+            
+            if (savedData) {
+              return { ...pericia, ...savedData } as Pericia;
+            }
           }
           if (error) {
             console.error('Erro Supabase insert:', error.message);
-            // Log detalhado do erro
             console.error('Erro completo:', error);
           }
         } catch (error) {
@@ -202,14 +211,22 @@ export function usePerencias() {
 
       if (supabase) {
         try {
-          const { data: result, error } = await supabase
+          const { error } = await supabase
             .from('pericias')
             .update(updatedDb)
-            .eq('id', id)
-            .select()
-            .single();
-          if (!error && result) {
-            return result as Pericia;
+            .eq('id', id);
+          
+          if (!error) {
+            // Faz um select para retornar dados atualizados
+            const { data: result } = await supabase
+              .from('pericias')
+              .select('id, created_at, updated_at, owner')
+              .eq('id', id)
+              .single();
+            
+            if (result) {
+              return { ...data, ...result, id } as Pericia;
+            }
           }
           if (error) {
             console.error('Erro Supabase update:', error.message);
