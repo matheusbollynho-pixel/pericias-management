@@ -75,7 +75,7 @@ function App() {
           </button>
         </div>
       </div>
-      <Dashboard />
+      <Dashboard userEmail={userEmail} />
     </div>
   );
 }

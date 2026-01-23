@@ -220,14 +220,11 @@ export const generatePericiaPDF = (pericia: Pericia) => {
     yPos += 5;
   }
 
-  // Footer / Assinatura
+  // Footer
   checkPageBreak();
   yPos += 15;
-  checkPageBreak();
-  doc.line(60, yPos, 150, yPos);
-  yPos += 5;
   doc.setFontSize(10);
-  doc.text('Perito Responsável', 105, yPos, { align: 'center' });
+  doc.text('Relatório gerado por sistema', 105, yPos, { align: 'center' });
 
   doc.save(`Pericia_${pericia.processo_numero.replace(/\//g, '-')}.pdf`);
 };

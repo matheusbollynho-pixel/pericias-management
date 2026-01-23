@@ -4,12 +4,24 @@ import { FileText, Plus, Search, Pencil, Printer } from 'lucide-react';
 import PericiaForm from '../components/PericiaForm';
 import { usePerencias } from '../hooks/usePerencias';
 import { generatePericiaPDF } from '../lib/pdfGenerator';
+interface DashboardProps {
+  userEmail: string;
+}
+
+const getPeritoName = (email: string): string => {
+  if (email === 'ellentarcy@gmail.com') return 'Tarciana Ellen';
+  if (email === 'viemarjorge@hotmail.com') return 'Viemar Cruz';
+  return '';
+};
+
+export default function Dashboard({ userEmail }: DashboardProps) {
 
 export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingPericia, setEditingPericia] = useState<Pericia | null>(null);
   const { pericias, isLoading, createPericia, updatePericia } = usePerencias();
+  const peritoNome = getPeritoName(userEmail);
 
   const handleSubmitPericia = (data: any) => {
     const payload = editingPericia
@@ -180,6 +192,7 @@ export default function Dashboard() {
           }}
           onSubmit={handleSubmitPericia}
           initialData={editingPericia || undefined}
+                  defaultPeritoNome={peritoNome}
         />
       )}
     </div>
