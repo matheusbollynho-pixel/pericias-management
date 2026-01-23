@@ -7,13 +7,15 @@ interface LoginFormProps {
 }
 
 const USERS = [
-  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com', password: '140926' },
-  { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com', password: 'cachaca' },
+  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com' },
+  { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com' },
 ];
 
 export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedEmail, setSelectedEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async (email: string, password: string) => {
     setError('');
@@ -66,7 +68,11 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           {USERS.map((user) => (
             <button
               key={user.email}
-              onClick={() => handleLogin(user.email, user.password)}
+              onClick={() => {
+                setSelectedEmail(user.email);
+                setPassword('');
+                setError('');
+              }}
               disabled={loading}
               className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all p-8 text-left group disabled:opacity-50"
             >
@@ -85,12 +91,61 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
               <div className="pt-4 border-t border-gray-100">
                 <p className="text-xs text-gray-500 text-center group-hover:text-blue-600 transition">
-                  {loading ? 'Conectando...' : 'Entrar agora'}
+                  {loading ? 'Conectando...' : selectedEmail === user.email ? 'Digite a senha abaixo' : 'Clique para selecionar'}
                 </p>
               </div>
             </button>
           ))}
         </div>
+
+        {/* Password prompt */}
+        {selectedEmail && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin(selectedEmail, password);
+            }}
+            className="bg-white rounded-xl shadow-lg p-6 space-y-4"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Usuário selecionado</p>
+                <p className="text-base font-semibold text-gray-900">{selectedEmail}</p>
+              </div>
+              <button
+                type="button"
+                className="text-sm text-blue-600 hover:underline"
+                onClick={() => {
+                  setSelectedEmail('');
+                  setPassword('');
+                  setError('');
+                }}
+              >
+                Trocar usuário
+              </button>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Digite a senha"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || !password}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition"
+            >
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
+          </form>
+        )}
 
         {/* Demo Info */}
         <div className="text-center text-sm text-gray-600 mt-12">
