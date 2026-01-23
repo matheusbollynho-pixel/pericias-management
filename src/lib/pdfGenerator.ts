@@ -199,14 +199,14 @@ export const generatePericiaPDF = (pericia: Pericia) => {
   }
 
   // VI. Conclusões da Perícia
-  const hasConclusoes = pericia.existe_insalubridade || pericia.existe_periculosidade || pericia.parecer_perito;
+  const hasConclusoes = pericia.existe_insalubridade === true || pericia.existe_periculosidade === true || !!pericia.parecer_perito;
   
   if (hasConclusoes) {
     addSectionTitle('VI. Conclusões da Perícia');
-    if (pericia.existe_insalubridade) {
+    if (pericia.existe_insalubridade === true) {
       addField('Insalubridade', `SIM - ${pericia.grau_insalubridade?.toUpperCase()}`);
     }
-    if (pericia.existe_periculosidade) {
+    if (pericia.existe_periculosidade === true) {
       addField('Periculosidade', `SIM - ${pericia.risco_periculosidade || 'Risco identificado'}`);
     }
     addField('Parecer Técnico', pericia.parecer_perito);
