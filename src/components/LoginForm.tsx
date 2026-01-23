@@ -7,8 +7,8 @@ interface LoginFormProps {
 }
 
 const USERS = [
-  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com', password: 'abc123' },
-  { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com', password: 'abc123' },
+  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com', password: '140926' },
+  { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com', password: 'cachaca' },
 ];
 
 export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
