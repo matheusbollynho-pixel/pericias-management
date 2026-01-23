@@ -17,9 +17,9 @@ export default function Dashboard() {
       : data;
 
     if (editingPericia) {
-      updatePericia.mutate(payload);
+      updatePericia(payload);
     } else {
-      createPericia.mutate(payload as any);
+      createPericia(payload as any);
     }
     setShowForm(false);
     setEditingPericia(null);
@@ -41,23 +41,6 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
-            {currentUser.slice(0, 1)}
-          </div>
-          <div>
-            <p className="text-sm text-gray-600">Perícias de</p>
-            <p className="text-lg font-semibold text-gray-900">{currentUser}</p>
-          </div>
-        </div>
-        <button
-          onClick={onSwitchUser}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-        >
-          Trocar pessoa
-        </button>
-      </div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
           <FileText className="w-8 h-8" />
@@ -197,7 +180,6 @@ export default function Dashboard() {
           }}
           onSubmit={handleSubmitPericia}
           initialData={editingPericia || undefined}
-          defaultPeritoNome={currentUser}
         />
       )}
     </div>
