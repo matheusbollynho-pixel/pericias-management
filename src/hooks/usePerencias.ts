@@ -31,21 +31,40 @@ export function usePerencias() {
     return () => subscription?.unsubscribe();
   }, []);
 
-  // Carregar perícias do localStorage ao iniciar
+  // Carregar perícias do Supabase (com fallback para localStorage)
   useEffect(() => {
     const loadPericias = async () => {
       try {
         setIsLoading(true);
         
         if (supabase && userEmail) {
-          // Tentar carregar do Supabase
-          const { data, error } = await supabase
-            .from('pericias')
-            .select('*')
-            .eq('owner', userEmail)
-            .order('created_at', { ascending: false });
-          
-          if (!error && data) {
+          // Primeiro tenta com filtro por owner (se existir no schema).
+          let data: any[] | null = null;
+          try {
+            const { data: dataOwner, error: errorOwner } = await supabase
+              .from('pericias')
+              .select('*')
+              .eq('owner', userEmail)
+              .order('created_at', { ascending: false });
+            if (!errorOwner) {
+              data = dataOwner as any[];
+            }
+          } catch (e: any) {
+            console.error('Erro ao filtrar por owner:', e?.message);
+          }
+
+          // Se coluna owner não existir, busca sem filtro
+          if (!data) {
+            const { data: dataAll, error: errorAll } = await supabase
+              .from('pericias')
+              .select('*')
+              .order('created_at', { ascending: false });
+            if (!errorAll && dataAll) {
+              data = dataAll as any[];
+            }
+          }
+
+          if (data) {
             setPericias(data as Pericia[]);
             localStorage.setItem(backupKey, JSON.stringify(data));
             setIsLoading(false);
@@ -83,32 +102,61 @@ export function usePerencias() {
 
   const createPericia = useMutation({
     mutationFn: async (pericia: Omit<Pericia, 'id' | 'created_at' | 'updated_at'>) => {
-      const newPericia: Pericia = {
-        ...pericia,
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        owner: userEmail,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+      // Monta payload compatível com o schema da tabela (sem owner/id)
+      const dbPayload: any = {
+        processo_numero: pericia.processo_numero,
+        vara: pericia.vara,
+        comarca: pericia.comarca,
+        parte_requerente: pericia.parte_requerente,
+        parte_requerida: pericia.parte_requerida,
+        perito_nome: pericia.perito_nome,
+        perito_especialidade: pericia.perito_especialidade,
+        data_nomeacao: pericia.data_nomeacao,
+        data_pericia: pericia.data_pericia,
+        objetivo: pericia.objetivo,
+        local_inspecionado: pericia.local_inspecionado,
+        setor: pericia.setor || null,
+        atividade_realizada: pericia.atividade_realizada,
+        agentes_quimicos: pericia.agentes_quimicos || null,
+        agentes_fisicos: pericia.agentes_fisicos || null,
+        agentes_biologicos: pericia.agentes_biologicos || null,
+        condicoes_perigosas: pericia.condicoes_perigosas || null,
+        existe_insalubridade: pericia.existe_insalubridade ?? false,
+        grau_insalubridade: pericia.grau_insalubridade || null,
+        existe_periculosidade: pericia.existe_periculosidade ?? false,
+        risco_periculosidade: pericia.risco_periculosidade || null,
+        parecer_perito: pericia.parecer_perito || null,
+        participantes: pericia.participantes || [],
+        status: pericia.status || 'andamento',
+        owner: userEmail || null,
       };
 
-        if (supabase && userEmail) {
+      if (supabase) {
         try {
           const { data, error } = await supabase
             .from('pericias')
-            .insert([newPericia])
+            .insert([dbPayload])
             .select()
             .single();
-          
           if (!error && data) {
-            return data;
+            return data as Pericia;
+          }
+          if (error) {
+            console.error('Erro Supabase insert:', error.message);
           }
         } catch (error) {
           console.error('Erro ao salvar no Supabase:', error);
         }
       }
 
-      // Fallback para localStorage
-      return newPericia;
+      // Fallback: salva localmente atribuindo id
+      const newLocal: Pericia = {
+        ...pericia,
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      } as any;
+      return newLocal;
     },
     onSuccess: (newPericia) => {
       const updated = [newPericia, ...pericias];
@@ -122,31 +170,61 @@ export function usePerencias() {
 
   const updatePericia = useMutation({
     mutationFn: async ({ id, ...data }: Partial<Pericia> & { id: string }) => {
-      const updated: Pericia = {
-        ...(pericias.find(p => p.id === id) || {}),
-        ...data,
-        id,
-        updated_at: new Date().toISOString(),
-      } as Pericia;
+      const updatedDb: any = {
+        processo_numero: data.processo_numero,
+        vara: data.vara,
+        comarca: data.comarca,
+        parte_requerente: data.parte_requerente,
+        parte_requerida: data.parte_requerida,
+        perito_nome: data.perito_nome,
+        perito_especialidade: data.perito_especialidade,
+        data_nomeacao: data.data_nomeacao,
+        data_pericia: data.data_pericia,
+        objetivo: (data as any).objetivo,
+        local_inspecionado: data.local_inspecionado,
+        setor: data.setor ?? null,
+        atividade_realizada: data.atividade_realizada,
+        agentes_quimicos: data.agentes_quimicos ?? null,
+        agentes_fisicos: data.agentes_fisicos ?? null,
+        agentes_biologicos: data.agentes_biologicos ?? null,
+        condicoes_perigosas: data.condicoes_perigosas ?? null,
+        existe_insalubridade: data.existe_insalubridade ?? false,
+        grau_insalubridade: data.grau_insalubridade ?? null,
+        existe_periculosidade: data.existe_periculosidade ?? false,
+        risco_periculosidade: data.risco_periculosidade ?? null,
+        parecer_perito: data.parecer_perito ?? null,
+        participantes: data.participantes ?? [],
+        status: data.status ?? 'andamento',
+      };
 
       if (supabase) {
         try {
           const { data: result, error } = await supabase
             .from('pericias')
-            .update(updated)
+            .update(updatedDb)
             .eq('id', id)
             .select()
             .single();
-          
           if (!error && result) {
-            return result;
+            return result as Pericia;
+          }
+          if (error) {
+            console.error('Erro Supabase update:', error.message);
           }
         } catch (error) {
           console.error('Erro ao atualizar no Supabase:', error);
         }
       }
 
-      return updated;
+      // Fallback: atualiza localmente
+      const prev = pericias.find(p => p.id === id) || ({} as Pericia);
+      const merged: Pericia = {
+        ...prev,
+        ...data,
+        id,
+        updated_at: new Date().toISOString(),
+      } as any;
+      return merged;
     },
     onSuccess: (updated) => {
       const newPericias = pericias.map(p => p.id === updated.id ? updated : p);
