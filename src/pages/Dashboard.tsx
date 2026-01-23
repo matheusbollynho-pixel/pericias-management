@@ -43,10 +43,10 @@ export default function Dashboard({ userEmail }: DashboardProps) {
   };
 
   const filteredPericias = pericias.filter(p =>
-    p.processo_numero.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.vara.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.parte_requerente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.parte_requerida.toLowerCase().includes(searchTerm.toLowerCase())
+    (p.processo_numero || p.processo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.vara || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.parte_requerente || p.parte || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.parte_requerida || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -138,10 +138,10 @@ export default function Dashboard({ userEmail }: DashboardProps) {
             <tbody>
               {filteredPericias.map((pericia) => (
                 <tr key={pericia.id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-6 py-3 text-sm text-gray-900">{pericia.processo_numero}</td>
+                  <td className="px-6 py-3 text-sm text-gray-900">{pericia.processo_numero || pericia.processo}</td>
                   <td className="px-6 py-3 text-sm text-gray-600">{pericia.vara}</td>
                   <td className="px-6 py-3 text-sm text-gray-600">
-                    {pericia.parte_requerente} vs {pericia.parte_requerida}
+                    {pericia.parte}
                   </td>
                   <td className="px-6 py-3">
                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
