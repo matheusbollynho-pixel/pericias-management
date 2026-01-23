@@ -8,7 +8,7 @@ interface LoginFormProps {
 
 const USERS = [
   { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com' },
-  { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com', displayEmail: 'viemarjorge@hotmail.com' },
+  { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com' },
 ];
 
 export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
@@ -87,7 +87,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               </div>
 
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{user.name}</h2>
-              <p className="text-sm text-gray-600 mb-4">{user.displayEmail || user.email}</p>
+              <p className="text-sm text-gray-600 mb-4">{user.email}</p>
 
               <div className="pt-4 border-t border-gray-100">
                 <p className="text-xs text-gray-500 text-center group-hover:text-blue-600 transition">
