@@ -15,8 +15,6 @@ const getPeritoName = (email: string): string => {
 };
 
 export default function Dashboard({ userEmail }: DashboardProps) {
-
-export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingPericia, setEditingPericia] = useState<Pericia | null>(null);
@@ -192,7 +190,7 @@ export default function Dashboard() {
           }}
           onSubmit={handleSubmitPericia}
           initialData={editingPericia || undefined}
-                  defaultPeritoNome={peritoNome}
+          defaultPeritoNome={peritoNome}
         />
       )}
     </div>
