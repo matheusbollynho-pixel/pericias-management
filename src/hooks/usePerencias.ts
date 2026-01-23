@@ -102,31 +102,13 @@ export function usePerencias() {
 
   const createPericia = useMutation({
     mutationFn: async (pericia: Omit<Pericia, 'id' | 'created_at' | 'updated_at'>) => {
-      // Payload com APENAS os campos que existem na tabela pericias
+      // Payload com APENAS os campos que realmente existem na tabela
       const dbPayload: any = {
-        processo_numero: pericia.processo_numero,
+        processo: pericia.processo_numero,
         vara: pericia.vara,
-        comarca: pericia.comarca,
-        parte_requerente: pericia.parte_requerente,
-        parte_requerida: pericia.parte_requerida,
-        perito_nome: pericia.perito_nome,
-        perito_especialidade: pericia.perito_especialidade,
-        data_nomeacao: pericia.data_nomeacao,
+        parte: `${pericia.parte_requerente} vs ${pericia.parte_requerida}`,
         data_pericia: pericia.data_pericia,
-        objetivo: pericia.objetivo,
-        local_inspecionado: pericia.local_inspecionado,
-        setor: pericia.setor || null,
-        atividade_realizada: pericia.atividade_realizada,
-        agentes_quimicos: pericia.agentes_quimicos || null,
-        agentes_fisicos: pericia.agentes_fisicos || null,
-        agentes_biologicos: pericia.agentes_biologicos || null,
-        condicoes_perigosas: pericia.condicoes_perigosas || null,
-        existe_insalubridade: pericia.existe_insalubridade ?? false,
-        grau_insalubridade: pericia.grau_insalubridade || null,
-        existe_periculosidade: pericia.existe_periculosidade ?? false,
-        risco_periculosidade: pericia.risco_periculosidade || null,
-        parecer_perito: pericia.parecer_perito || null,
-        participantes: pericia.participantes || [],
+        observacoes: pericia.observacoes_finais || '',
         status: pericia.status || 'andamento',
         owner: userEmail || null,
       };
@@ -183,29 +165,11 @@ export function usePerencias() {
   const updatePericia = useMutation({
     mutationFn: async ({ id, ...data }: Partial<Pericia> & { id: string }) => {
       const updatedDb: any = {
-        processo_numero: data.processo_numero,
+        processo: data.processo_numero,
         vara: data.vara,
-        comarca: data.comarca,
-        parte_requerente: data.parte_requerente,
-        parte_requerida: data.parte_requerida,
-        perito_nome: data.perito_nome,
-        perito_especialidade: data.perito_especialidade,
-        data_nomeacao: data.data_nomeacao,
+        parte: `${data.parte_requerente || ''} vs ${data.parte_requerida || ''}`,
         data_pericia: data.data_pericia,
-        objetivo: (data as any).objetivo,
-        local_inspecionado: data.local_inspecionado,
-        setor: data.setor ?? null,
-        atividade_realizada: data.atividade_realizada,
-        agentes_quimicos: data.agentes_quimicos ?? null,
-        agentes_fisicos: data.agentes_fisicos ?? null,
-        agentes_biologicos: data.agentes_biologicos ?? null,
-        condicoes_perigosas: data.condicoes_perigosas ?? null,
-        existe_insalubridade: data.existe_insalubridade ?? false,
-        grau_insalubridade: data.grau_insalubridade ?? null,
-        existe_periculosidade: data.existe_periculosidade ?? false,
-        risco_periculosidade: data.risco_periculosidade ?? null,
-        parecer_perito: data.parecer_perito ?? null,
-        participantes: data.participantes ?? [],
+        observacoes: data.observacoes_finais || '',
         status: data.status ?? 'andamento',
       };
 
