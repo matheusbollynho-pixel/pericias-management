@@ -16,8 +16,11 @@ export default function Dashboard() {
       ? { ...data, id: editingPericia.id }
       : data;
 
-    if (editingPericia) updatePericia(payload);
-    else createPericia(payload as any);
+    if (editingPericia) {
+      updatePericia.mutate(payload);
+    } else {
+      createPericia.mutate(payload as any);
+    }
     setShowForm(false);
     setEditingPericia(null);
   };

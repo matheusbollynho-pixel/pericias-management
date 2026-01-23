@@ -3,8 +3,6 @@ import { supabase } from '../lib/supabase';
 import type { Pericia } from '../types/pericia';
 import { useState, useEffect, useMemo } from 'react';
 
-const slugify = (value: string) => value.toLowerCase().replace(/\s+/g, '_');
-
 export function usePerencias() {
   const queryClient = useQueryClient();
   const [pericias, setPericias] = useState<Pericia[]>([]);
