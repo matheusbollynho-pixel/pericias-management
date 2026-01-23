@@ -1,60 +1,83 @@
 ﻿import { useEffect, useState } from 'react';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from './lib/supabase';
+import LoginForm from './components/LoginForm';
 import Dashboard from './pages/Dashboard';
 import './App.css';
 
-const USERS = ['Tarciana Ellen', 'Viemar Cruz'];
-
 function App() {
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem('currentUser');
-    if (saved) setCurrentUser(saved);
+    if (!supabase) return;
+
+    // Verificar se existe uma sessão ativa
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      }
+      setLoading(false);
+    });
+
+    // Escutar mudanças na autenticação
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      } else {
+        setUserEmail('');
+      }
+    });
+
+    return () => subscription?.unsubscribe();
   }, []);
 
-  const handleSelectUser = (user: string) => {
-    setCurrentUser(user);
-    localStorage.setItem('currentUser', user);
+  const handleLogout = async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    setSession(null);
+    setUserEmail('');
   };
 
-  const handleSwitchUser = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-  };
-
-  if (!currentUser) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl space-y-6">
-          <div>
-            <p className="text-sm text-gray-500">Selecione o profissional</p>
-            <h1 className="text-2xl font-bold text-gray-900">Portal de Perícias</h1>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {USERS.map((user) => (
-              <button
-                key={user}
-                onClick={() => handleSelectUser(user)}
-                className="w-full border border-gray-200 rounded-lg p-4 text-left hover:border-blue-500 hover:shadow-md transition"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
-                    {user.slice(0, 1)}
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Acessar perícias</p>
-                    <p className="text-base font-semibold text-gray-900">{user}</p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600 mt-4">Carregando...</p>
         </div>
       </div>
     );
   }
 
-  return <Dashboard currentUser={currentUser} onSwitchUser={handleSwitchUser} />;
+  if (!session) {
+    return <LoginForm onLoginSuccess={() => {}} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Portal de Perícias</h1>
+            <p className="text-sm text-gray-500">{userEmail}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+          >
+            Sair
+          </button>
+        </div>
+      </div>
+      <Dashboard />
+    </div>
+  );
 }
 
 export default App;

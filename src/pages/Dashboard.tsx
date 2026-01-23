@@ -5,21 +5,16 @@ import PericiaForm from '../components/PericiaForm';
 import { usePerencias } from '../hooks/usePerencias';
 import { generatePericiaPDF } from '../lib/pdfGenerator';
 
-interface DashboardProps {
-  currentUser: string;
-  onSwitchUser: () => void;
-}
-
-export default function Dashboard({ currentUser, onSwitchUser }: DashboardProps) {
+export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingPericia, setEditingPericia] = useState<Pericia | null>(null);
-  const { pericias, isLoading, createPericia, updatePericia } = usePerencias(currentUser);
+  const { pericias, isLoading, createPericia, updatePericia } = usePerencias();
 
   const handleSubmitPericia = (data: any) => {
     const payload = editingPericia
       ? { ...data, id: editingPericia.id }
-      : { ...data, perito_nome: data.perito_nome || currentUser };
+      : data;
 
     if (editingPericia) updatePericia(payload);
     else createPericia(payload as any);

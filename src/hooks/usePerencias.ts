@@ -5,13 +5,33 @@ import { useState, useEffect, useMemo } from 'react';
 
 const slugify = (value: string) => value.toLowerCase().replace(/\s+/g, '_');
 
-export function usePerencias(currentUser?: string) {
+export function usePerencias() {
   const queryClient = useQueryClient();
   const [pericias, setPericias] = useState<Pericia[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string>('');
 
-  const storageKey = useMemo(() => currentUser ? `pericias_${slugify(currentUser)}` : 'pericias', [currentUser]);
-  const backupKey = useMemo(() => currentUser ? `pericias_backup_${slugify(currentUser)}` : 'pericias_backup', [currentUser]);
+  const storageKey = useMemo(() => `pericias_${userEmail}`, [userEmail]);
+  const backupKey = useMemo(() => `pericias_backup_${userEmail}`, [userEmail]);
+
+  // Obter email do usuário logado
+  useEffect(() => {
+    if (!supabase) return;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      }
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
 
   // Carregar perícias do localStorage ao iniciar
   useEffect(() => {
@@ -19,12 +39,12 @@ export function usePerencias(currentUser?: string) {
       try {
         setIsLoading(true);
         
-        if (supabase && currentUser) {
+        if (supabase && userEmail) {
           // Tentar carregar do Supabase
           const { data, error } = await supabase
             .from('pericias')
             .select('*')
-            .eq('owner', currentUser)
+            .eq('owner', userEmail)
             .order('created_at', { ascending: false });
           
           if (!error && data) {
@@ -52,8 +72,10 @@ export function usePerencias(currentUser?: string) {
       }
     };
 
-    loadPericias();
-  }, [storageKey, backupKey, currentUser]);
+    if (userEmail) {
+      loadPericias();
+    }
+  }, [storageKey, backupKey, userEmail]);
 
   const savePericias = (newPericias: Pericia[]) => {
     setPericias(newPericias);
@@ -66,12 +88,12 @@ export function usePerencias(currentUser?: string) {
       const newPericia: Pericia = {
         ...pericia,
         id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        owner: currentUser,
+        owner: userEmail,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
 
-        if (supabase && currentUser) {
+        if (supabase && userEmail) {
         try {
           const { data, error } = await supabase
             .from('pericias')
