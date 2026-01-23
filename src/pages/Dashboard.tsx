@@ -10,7 +10,7 @@ interface DashboardProps {
 
 const getPeritoName = (email: string): string => {
   if (email === 'ellentarcy@gmail.com') return 'Tarciana Ellen';
-  if (email === 'viemarjorge@hotmail.com') return 'Viemar Cruz';
+  if (email === 'viemarcruz@hotmail.com') return 'Viemar Jorge';
   return '';
 };
 
