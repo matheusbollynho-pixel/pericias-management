@@ -104,15 +104,49 @@ export function usePerencias() {
     mutationFn: async (pericia: Omit<Pericia, 'id' | 'created_at' | 'updated_at'>) => {
       // Payload com todos os campos da perícia
       const dbPayload: any = {
+        // Informações do Processo
         processo_numero: pericia.processo_numero,
         vara: pericia.vara,
         comarca: pericia.comarca,
+        
+        // Resumo do Caso
+        resumo_caso: pericia.resumo_caso,
+        objetivo_determinar_insalubridade: pericia.objetivo_determinar_insalubridade || false,
+        objetivo_determinar_periculosidade: pericia.objetivo_determinar_periculosidade || false,
+        objetivo_avaliar_exposicao: pericia.objetivo_avaliar_exposicao || false,
+        objetivo_outros: pericia.objetivo_outros,
+        
+        // Partes
         parte_requerente: pericia.parte_requerente,
         parte_requerida: pericia.parte_requerida,
+        requerente_cargo: pericia.requerente_cargo,
+        requerente_setor: pericia.requerente_setor,
+        requerente_endereco: pericia.requerente_endereco,
+        requerente_telefone: pericia.requerente_telefone,
+        requerente_email: pericia.requerente_email,
+        requerida_cargo: pericia.requerida_cargo,
+        requerida_setor: pericia.requerida_setor,
+        requerida_endereco: pericia.requerida_endereco,
+        requerida_telefone: pericia.requerida_telefone,
+        requerida_email: pericia.requerida_email,
+        
+        // Perito
         perito_nome: pericia.perito_nome,
         perito_especialidade: pericia.perito_especialidade,
+        perito_profissao_formacao: pericia.perito_profissao_formacao,
+        perito_experiencia: pericia.perito_experiencia,
         data_nomeacao: pericia.data_nomeacao || null,
         data_pericia: pericia.data_pericia || null,
+        
+        // Metodologia
+        metodo_inspecao_local: pericia.metodo_inspecao_local || false,
+        metodo_medicoes_ambientais: pericia.metodo_medicoes_ambientais || false,
+        metodo_analise_documentos: pericia.metodo_analise_documentos || false,
+        metodo_entrevistas: pericia.metodo_entrevistas || false,
+        metodo_outros: pericia.metodo_outros,
+        procedimentos_avaliacao: pericia.procedimentos_avaliacao,
+        
+        // Ambiente
         objetivo: pericia.objetivo,
         local_inspecionado: pericia.local_inspecionado,
         setor: pericia.setor,
@@ -121,11 +155,18 @@ export function usePerencias() {
         agentes_fisicos: pericia.agentes_fisicos,
         agentes_biologicos: pericia.agentes_biologicos,
         condicoes_perigosas: pericia.condicoes_perigosas,
+        
+        // Conclusões
         existe_insalubridade: pericia.existe_insalubridade || false,
         grau_insalubridade: pericia.grau_insalubridade,
         existe_periculosidade: pericia.existe_periculosidade || false,
         risco_periculosidade: pericia.risco_periculosidade,
         parecer_perito: pericia.parecer_perito,
+        
+        // Observações
+        observacoes_finais: pericia.observacoes_finais,
+        
+        // Metadata
         participantes: pericia.participantes || [],
         status: pericia.status || 'andamento',
         owner: userEmail, // CRITICAL: Campo necessário para RLS
@@ -183,15 +224,49 @@ export function usePerencias() {
     mutationFn: async ({ id, ...data }: Partial<Pericia> & { id: string }) => {
       // Preparar payload com todos os campos que o banco suporta
       const updatedDb: any = {
+        // Informações do Processo
         processo_numero: data.processo_numero,
         vara: data.vara,
         comarca: data.comarca,
+        
+        // Resumo do Caso
+        resumo_caso: data.resumo_caso,
+        objetivo_determinar_insalubridade: data.objetivo_determinar_insalubridade || false,
+        objetivo_determinar_periculosidade: data.objetivo_determinar_periculosidade || false,
+        objetivo_avaliar_exposicao: data.objetivo_avaliar_exposicao || false,
+        objetivo_outros: data.objetivo_outros,
+        
+        // Partes
         parte_requerente: data.parte_requerente,
         parte_requerida: data.parte_requerida,
+        requerente_cargo: data.requerente_cargo,
+        requerente_setor: data.requerente_setor,
+        requerente_endereco: data.requerente_endereco,
+        requerente_telefone: data.requerente_telefone,
+        requerente_email: data.requerente_email,
+        requerida_cargo: data.requerida_cargo,
+        requerida_setor: data.requerida_setor,
+        requerida_endereco: data.requerida_endereco,
+        requerida_telefone: data.requerida_telefone,
+        requerida_email: data.requerida_email,
+        
+        // Perito
         perito_nome: data.perito_nome,
         perito_especialidade: data.perito_especialidade,
+        perito_profissao_formacao: data.perito_profissao_formacao,
+        perito_experiencia: data.perito_experiencia,
         data_nomeacao: data.data_nomeacao || null,
         data_pericia: data.data_pericia || null,
+        
+        // Metodologia
+        metodo_inspecao_local: data.metodo_inspecao_local || false,
+        metodo_medicoes_ambientais: data.metodo_medicoes_ambientais || false,
+        metodo_analise_documentos: data.metodo_analise_documentos || false,
+        metodo_entrevistas: data.metodo_entrevistas || false,
+        metodo_outros: data.metodo_outros,
+        procedimentos_avaliacao: data.procedimentos_avaliacao,
+        
+        // Ambiente
         objetivo: data.objetivo,
         local_inspecionado: data.local_inspecionado,
         setor: data.setor,
@@ -200,11 +275,18 @@ export function usePerencias() {
         agentes_fisicos: data.agentes_fisicos,
         agentes_biologicos: data.agentes_biologicos,
         condicoes_perigosas: data.condicoes_perigosas,
+        
+        // Conclusões
         existe_insalubridade: data.existe_insalubridade || false,
         grau_insalubridade: data.grau_insalubridade,
         existe_periculosidade: data.existe_periculosidade || false,
         risco_periculosidade: data.risco_periculosidade,
         parecer_perito: data.parecer_perito,
+        
+        // Observações
+        observacoes_finais: data.observacoes_finais,
+        
+        // Metadata
         participantes: data.participantes || [],
         status: data.status ?? 'andamento',
       };
