@@ -100,4 +100,3 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     </div>
   );
 }
-}
