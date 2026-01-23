@@ -128,6 +128,7 @@ export function usePerencias() {
         parecer_perito: pericia.parecer_perito,
         participantes: pericia.participantes || [],
         status: pericia.status || 'andamento',
+        owner: userEmail, // CRITICAL: Campo necessário para RLS
       };
 
       if (supabase) {
