@@ -43,6 +43,13 @@ export const generatePericiaPDF = (pericia: Pericia) => {
   doc.setFontSize(10);
   doc.text('Insalubridade e Periculosidade', 105, yPos, { align: 'center' });
   yPos += 15;
+  // Perito Responsável
+  if (pericia.perito_nome) {
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Perito Responsável: ${pericia.perito_nome}`, 20, yPos);
+    doc.setFont('helvetica', 'normal');
+    yPos += 10;
+  }
 
   // I. Informações do Processo e do Caso
   addSectionTitle('I. Informações do Processo e do Caso');
