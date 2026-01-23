@@ -56,7 +56,7 @@ export const generatePericiaPDF = (pericia: Pericia) => {
   addField('Processo nº', pericia.processo_numero);
   addField('Vara', pericia.vara);
   addField('Comarca', pericia.comarca);
-  addField('Status', pericia.status.toUpperCase());
+  addField('Status', pericia.status?.toUpperCase());
   addField('Resumo do Caso', pericia.resumo_caso);
   
   // II. Participantes da Perícia
@@ -233,7 +233,7 @@ export const generatePericiaPDF = (pericia: Pericia) => {
   doc.setFontSize(10);
   doc.text('Relatório gerado por sistema', 105, yPos, { align: 'center' });
 
-  doc.save(`Pericia_${pericia.processo_numero.replace(/\//g, '-')}.pdf`);
+  doc.save(`Pericia_${(pericia.processo_numero || 'documento').replace(/\//g, '-')}.pdf`);
 };
 
 // Updated 14:33:16

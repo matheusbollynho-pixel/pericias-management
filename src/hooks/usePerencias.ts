@@ -102,15 +102,32 @@ export function usePerencias() {
 
   const createPericia = useMutation({
     mutationFn: async (pericia: Omit<Pericia, 'id' | 'created_at' | 'updated_at'>) => {
-      // Payload com APENAS os campos que realmente existem na tabela
+      // Payload com todos os campos da perícia
       const dbPayload: any = {
-        processo: pericia.processo_numero,
+        processo_numero: pericia.processo_numero,
         vara: pericia.vara,
-        parte: `${pericia.parte_requerente} vs ${pericia.parte_requerida}`,
-        data_pericia: pericia.data_pericia || null, // Aceita null se vazio
-        observacoes: pericia.observacoes_finais || '',
+        comarca: pericia.comarca,
+        parte_requerente: pericia.parte_requerente,
+        parte_requerida: pericia.parte_requerida,
+        perito_nome: pericia.perito_nome,
+        perito_especialidade: pericia.perito_especialidade,
+        data_nomeacao: pericia.data_nomeacao || null,
+        data_pericia: pericia.data_pericia || null,
+        objetivo: pericia.objetivo,
+        local_inspecionado: pericia.local_inspecionado,
+        setor: pericia.setor,
+        atividade_realizada: pericia.atividade_realizada,
+        agentes_quimicos: pericia.agentes_quimicos,
+        agentes_fisicos: pericia.agentes_fisicos,
+        agentes_biologicos: pericia.agentes_biologicos,
+        condicoes_perigosas: pericia.condicoes_perigosas,
+        existe_insalubridade: pericia.existe_insalubridade || false,
+        grau_insalubridade: pericia.grau_insalubridade,
+        existe_periculosidade: pericia.existe_periculosidade || false,
+        risco_periculosidade: pericia.risco_periculosidade,
+        parecer_perito: pericia.parecer_perito,
+        participantes: pericia.participantes || [],
         status: pericia.status || 'andamento',
-        owner: userEmail || null,
       };
 
       if (supabase) {
@@ -124,14 +141,13 @@ export function usePerencias() {
             // Faz um select imediatamente após para retornar os dados salvos
             const { data: savedData } = await supabase
               .from('pericias')
-              .select('id, created_at, updated_at, owner')
-              .eq('owner', userEmail)
+              .select('*')
               .order('created_at', { ascending: false })
               .limit(1)
               .single();
             
             if (savedData) {
-              return { ...pericia, ...savedData } as Pericia;
+              return savedData as Pericia;
             }
           }
           if (error) {
@@ -164,12 +180,31 @@ export function usePerencias() {
 
   const updatePericia = useMutation({
     mutationFn: async ({ id, ...data }: Partial<Pericia> & { id: string }) => {
+      // Preparar payload com todos os campos que o banco suporta
       const updatedDb: any = {
-        processo: data.processo_numero,
+        processo_numero: data.processo_numero,
         vara: data.vara,
-        parte: `${data.parte_requerente || ''} vs ${data.parte_requerida || ''}`,
-        data_pericia: data.data_pericia || null, // Aceita null se vazio
-        observacoes: data.observacoes_finais || '',
+        comarca: data.comarca,
+        parte_requerente: data.parte_requerente,
+        parte_requerida: data.parte_requerida,
+        perito_nome: data.perito_nome,
+        perito_especialidade: data.perito_especialidade,
+        data_nomeacao: data.data_nomeacao || null,
+        data_pericia: data.data_pericia || null,
+        objetivo: data.objetivo,
+        local_inspecionado: data.local_inspecionado,
+        setor: data.setor,
+        atividade_realizada: data.atividade_realizada,
+        agentes_quimicos: data.agentes_quimicos,
+        agentes_fisicos: data.agentes_fisicos,
+        agentes_biologicos: data.agentes_biologicos,
+        condicoes_perigosas: data.condicoes_perigosas,
+        existe_insalubridade: data.existe_insalubridade || false,
+        grau_insalubridade: data.grau_insalubridade,
+        existe_periculosidade: data.existe_periculosidade || false,
+        risco_periculosidade: data.risco_periculosidade,
+        parecer_perito: data.parecer_perito,
+        participantes: data.participantes || [],
         status: data.status ?? 'andamento',
       };
 
@@ -184,12 +219,12 @@ export function usePerencias() {
             // Faz um select para retornar dados atualizados
             const { data: result } = await supabase
               .from('pericias')
-              .select('id, created_at, updated_at, owner')
+              .select('*')
               .eq('id', id)
               .single();
             
             if (result) {
-              return { ...data, ...result, id } as Pericia;
+              return result as Pericia;
             }
           }
           if (error) {
