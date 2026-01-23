@@ -107,7 +107,7 @@ export function usePerencias() {
         processo: pericia.processo_numero,
         vara: pericia.vara,
         parte: `${pericia.parte_requerente} vs ${pericia.parte_requerida}`,
-        data_pericia: pericia.data_pericia,
+        data_pericia: pericia.data_pericia || null, // Aceita null se vazio
         observacoes: pericia.observacoes_finais || '',
         status: pericia.status || 'andamento',
         owner: userEmail || null,
@@ -168,7 +168,7 @@ export function usePerencias() {
         processo: data.processo_numero,
         vara: data.vara,
         parte: `${data.parte_requerente || ''} vs ${data.parte_requerida || ''}`,
-        data_pericia: data.data_pericia,
+        data_pericia: data.data_pericia || null, // Aceita null se vazio
         observacoes: data.observacoes_finais || '',
         status: data.status ?? 'andamento',
       };
