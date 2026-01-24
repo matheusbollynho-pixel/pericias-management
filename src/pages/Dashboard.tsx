@@ -10,8 +10,8 @@ interface DashboardProps {
 }
 
 const getPeritoName = (email: string): string => {
-  if (email === 'ellentarcy@gmail.com') return 'Tarciana Ellen';
-  if (email === 'viemarjorge@hotmail.com') return 'Viemar Cruz';
+  if (email === 'tarcianaellen@outlook.com') return 'Tarciana Ellen';
+  if (email === 'viemarcruz@hotmail.com') return 'Viemar Cruz';
   return '';
 };
 
@@ -43,11 +43,8 @@ export default function Dashboard({ userEmail }: DashboardProps) {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = (password: string) => {
-    const userEmail = localStorage.getItem('userEmail');
-    const correctPassword = userEmail === 'tarcianaellen@outlook.com' ? 'tarciana' : 'viemarvjc';
-    
-    if (password === correctPassword && periciaToDelete) {
+  const handleConfirmDelete = () => {
+    if (periciaToDelete) {
       deletePericia(periciaToDelete.id);
       setShowDeleteModal(false);
       setPericiaToDelete(null);

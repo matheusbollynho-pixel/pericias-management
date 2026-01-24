@@ -10,8 +10,8 @@ interface DeleteConfirmModalProps {
 }
 
 const USERS = [
-  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com', password: '140926' },
-  { name: 'Viemar Cruz', email: 'viemarjorge@hotmail.com', password: 'viemarvjc' },
+  { name: 'Tarciana Ellen', email: 'tarcianaellen@outlook.com', password: 'tarciana' },
+  { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com', password: 'viemarvjc' },
 ];
 
 export default function DeleteConfirmModal({
