@@ -44,7 +44,10 @@ export default function Dashboard({ userEmail }: DashboardProps) {
   };
 
   const handleConfirmDelete = (password: string) => {
-    if (periciaToDelete) {
+    const userEmail = localStorage.getItem('userEmail');
+    const correctPassword = userEmail === 'tarcianaellen@outlook.com' ? 'tarciana' : 'viemarvjc';
+    
+    if (password === correctPassword && periciaToDelete) {
       deletePericia(periciaToDelete.id);
       setShowDeleteModal(false);
       setPericiaToDelete(null);
