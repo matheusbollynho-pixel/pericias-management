@@ -157,7 +157,7 @@ export default function Dashboard({ userEmail }: DashboardProps) {
                   <td className="px-6 py-3 text-right">
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => generatePericiaPDF(pericia)}
+                        onClick={() => generatePericiaPDF(pericia, peritoNome)}
                         className="text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-full transition-colors"
                         title="Imprimir PDF"
                       >

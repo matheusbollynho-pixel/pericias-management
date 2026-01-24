@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import type { Pericia } from '../types/pericia';
 
-export const generatePericiaPDF = (pericia: Pericia) => {
+export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
   console.log('=== DADOS DA PERÍCIA PARA PDF ===', pericia);
   console.log('Campos preenchidos:', Object.keys(pericia).filter(k => pericia[k as keyof Pericia]));
   
@@ -228,7 +228,7 @@ export const generatePericiaPDF = (pericia: Pericia) => {
   checkPageBreak();
   yPos += 15;
   doc.setFontSize(10);
-  const periciaAutor = pericia.perito_nome || 'Perito';
+  const periciaAutor = userName || pericia.perito_nome || 'Perito';
   doc.text(`Relatório do perito: ${periciaAutor}`, 105, yPos, { align: 'center' });
 
   doc.save(`Pericia_${(pericia.processo_numero || 'documento').replace(/\//g, '-')}.pdf`);
