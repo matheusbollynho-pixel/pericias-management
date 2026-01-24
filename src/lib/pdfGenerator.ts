@@ -40,14 +40,6 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
   doc.setFontSize(18);
   doc.text('Relatório de Perícia Judicial', 105, yPos, { align: 'center' });
   yPos += 15;
-  // Perito Responsável
-  if (pericia.perito_nome) {
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Perito Responsável: ${pericia.perito_nome}`, 20, yPos);
-    doc.setFont('helvetica', 'normal');
-    yPos += 10;
-  }
-
   // I. Informações do Processo e do Caso
   addSectionTitle('I. Informações do Processo e do Caso');
   addField('Processo nº', pericia.processo_numero);

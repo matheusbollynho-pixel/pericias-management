@@ -34,7 +34,9 @@ export default function Dashboard({ userEmail }: DashboardProps) {
     } else {
       createPericia(payload as any);
     }
-    
+    setShowForm(false);
+    setEditingPericia(null);
+  };
 
   const handleDeleteClick = (pericia: Pericia) => {
     setPericiaToDelete(pericia);
@@ -47,8 +49,6 @@ export default function Dashboard({ userEmail }: DashboardProps) {
       setShowDeleteModal(false);
       setPericiaToDelete(null);
     }
-  };setShowForm(false);
-    setEditingPericia(null);
   };
 
   const stats = {
