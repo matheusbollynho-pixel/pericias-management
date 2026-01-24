@@ -176,13 +176,6 @@ export default function Dashboard({ userEmail }: DashboardProps) {
                         onClick={() => generatePericiaPDF(pericia, peritoNome)}
                         className="text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-full transition-colors"
                         title="Imprimir PDF"
-                      <button
-                        onClick={() => handleDeleteClick(pericia)}
-                        className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-full transition-colors"
-                        title="Excluir Perícia"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
                       >
                         <Printer className="w-4 h-4" />
                       </button>
@@ -196,6 +189,15 @@ export default function Dashboard({ userEmail }: DashboardProps) {
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
+                      <button
+                        onClick={() => handleDeleteClick(pericia)}
+                        className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-full transition-colors"
+                        title="Excluir Perícia"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
 
       <DeleteConfirmModal
         isOpen={showDeleteModal}
