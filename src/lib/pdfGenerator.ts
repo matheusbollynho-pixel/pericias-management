@@ -40,9 +40,6 @@ export const generatePericiaPDF = (pericia: Pericia) => {
   doc.setFontSize(18);
   doc.text('Relatório de Perícia Judicial', 105, yPos, { align: 'center' });
   yPos += 15;
-  doc.setFontSize(10);
-  doc.text('Insalubridade e Periculosidade', 105, yPos, { align: 'center' });
-  yPos += 15;
   // Perito Responsável
   if (pericia.perito_nome) {
     doc.setFont('helvetica', 'bold');
