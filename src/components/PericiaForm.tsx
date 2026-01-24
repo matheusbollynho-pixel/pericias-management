@@ -18,7 +18,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
     
     // Informações do Caso
     resumo_caso: initialData?.resumo_caso || '',
-    objetivo_determinar_insalubridade: initialData?.objetivo_determinar_insalubridade ?? true,
+    objetivo_determinar_insalubridade: initialData?.objetivo_determinar_insalubridade ?? false,
     objetivo_determinar_periculosidade: initialData?.objetivo_determinar_periculosidade ?? false,
     objetivo_avaliar_exposicao: initialData?.objetivo_avaliar_exposicao ?? false,
     objetivo_outros: initialData?.objetivo_outros || '',
@@ -48,7 +48,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
     data_pericia: initialData?.data_pericia || '',
     
     // Metodologia
-    metodo_inspecao_local: initialData?.metodo_inspecao_local ?? true,
+    metodo_inspecao_local: initialData?.metodo_inspecao_local ?? false,
     metodo_medicoes_ambientais: initialData?.metodo_medicoes_ambientais ?? false,
     metodo_analise_documentos: initialData?.metodo_analise_documentos ?? false,
     metodo_entrevistas: initialData?.metodo_entrevistas ?? false,
