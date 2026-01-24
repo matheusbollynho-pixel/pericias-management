@@ -10,7 +10,7 @@ interface DeleteConfirmModalProps {
 }
 
 const USERS = [
-  { name: 'Tarciana Ellen', email: 'tarcianaellen@outlook.com', password: 'tarciana' },
+  { name: 'Tarciana Ellen', email: 'tarcianaellen@outlook.com', password: '140926' },
   { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com', password: 'viemarvjc' },
 ];
 
