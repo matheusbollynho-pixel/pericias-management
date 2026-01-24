@@ -12,23 +12,17 @@ export function usePerencias() {
   const storageKey = useMemo(() => `pericias_${userEmail}`, [userEmail]);
   const backupKey = useMemo(() => `pericias_backup_${userEmail}`, [userEmail]);
 
-  // Obter email do usuário logado
+  // Obter email do usuário logado do localStorage (login local)
   useEffect(() => {
-    if (!supabase) return;
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user?.email) {
-        setUserEmail(session.user.email);
+    const user = localStorage.getItem('currentUser');
+    if (user) {
+      try {
+        const { email } = JSON.parse(user);
+        setUserEmail(email);
+      } catch (e) {
+        console.error('Erro ao ler usuário do localStorage:', e);
       }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user?.email) {
-        setUserEmail(session.user.email);
-      }
-    });
-
-    return () => subscription?.unsubscribe();
+    }
   }, []);
 
   // Carregar perícias do Supabase (com fallback para localStorage)
