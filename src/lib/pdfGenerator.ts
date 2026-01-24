@@ -228,7 +228,8 @@ export const generatePericiaPDF = (pericia: Pericia) => {
   checkPageBreak();
   yPos += 15;
   doc.setFontSize(10);
-  doc.text('Relatório gerado por sistema', 105, yPos, { align: 'center' });
+  const periciaAutor = pericia.perito_nome || 'Perito';
+  doc.text(`Relatório do perito: ${periciaAutor}`, 105, yPos, { align: 'center' });
 
   doc.save(`Pericia_${(pericia.processo_numero || 'documento').replace(/\//g, '-')}.pdf`);
 };
