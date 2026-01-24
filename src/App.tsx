@@ -28,7 +28,12 @@ function App() {
   const handleLoginSuccess = () => {
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
+      try {
+        const user = JSON.parse(savedUser);
+        setCurrentUser(user);
+      } catch (e) {
+        console.error('Erro ao fazer login:', e);
+      }
     }
   };
 

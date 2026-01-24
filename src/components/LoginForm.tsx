@@ -146,8 +146,10 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         )}
 
         {/* Demo Info */}
-        <div className="text-center text-sm text-gray-600 mt-12">
-          <p>Dados de teste disponíveis para demonstração</p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
+          <p className="text-sm text-blue-900 font-semibold mb-2">💡 Dados de Acesso:</p>
+          <p className="text-sm text-blue-800">🔑 <strong>Tarciana:</strong> tarciana</p>
+          <p className="text-sm text-blue-800">🔑 <strong>Viemar:</strong> viemarvjc</p>
         </div>
       </div>
     </div>
