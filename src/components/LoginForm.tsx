@@ -68,7 +68,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               key={user.email}
               onClick={() => {
                 setSelectedEmail(user.email);
-                setPassword('');
+                setInputPassword('');
                 setError('');
               }}
               disabled={loading}
