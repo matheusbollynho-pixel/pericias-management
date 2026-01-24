@@ -1,47 +1,40 @@
 ﻿import { useEffect, useState } from 'react';
-import type { Session } from '@supabase/supabase-js';
-import { supabase } from './lib/supabase';
 import LoginForm from './components/LoginForm';
 import Dashboard from './pages/Dashboard';
 import './App.css';
 
+interface CurrentUser {
+  email: string;
+  name: string;
+}
+
 function App() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [userEmail, setUserEmail] = useState<string>('');
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabase) return;
-
-    // Verificar se existe uma sessão ativa
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user?.email) {
-        setUserEmail(session.user.email);
+    // Verificar se existe usuário logado no localStorage
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Erro ao carregar usuário:', e);
       }
-      setLoading(false);
-    });
-
-    // Escutar mudanças na autenticação
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session?.user?.email) {
-        setUserEmail(session.user.email);
-      } else {
-        setUserEmail('');
-      }
-    });
-
-    return () => subscription?.unsubscribe();
+    }
+    setLoading(false);
   }, []);
 
-  const handleLogout = async () => {
-    if (!supabase) return;
-    await supabase.auth.signOut();
-    setSession(null);
-    setUserEmail('');
+  const handleLoginSuccess = () => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
   };
 
   if (loading) {
@@ -55,8 +48,8 @@ function App() {
     );
   }
 
-  if (!session) {
-    return <LoginForm onLoginSuccess={() => {}} />;
+  if (!currentUser) {
+    return <LoginForm onLoginSuccess={handleLoginSuccess} />;
   }
 
   return (
@@ -65,7 +58,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Portal de Perícias</h1>
-            <p className="text-sm text-gray-500">{userEmail}</p>
+            <p className="text-sm text-gray-500">{currentUser.name} ({currentUser.email})</p>
           </div>
           <button
             onClick={handleLogout}
@@ -75,7 +68,7 @@ function App() {
           </button>
         </div>
       </div>
-      <Dashboard userEmail={userEmail} />
+      <Dashboard userEmail={currentUser.email} />
     </div>
   );
 }

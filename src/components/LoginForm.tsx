@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
 import { AlertCircle, LogIn } from 'lucide-react';
 
 interface LoginFormProps {
@@ -7,43 +6,42 @@ interface LoginFormProps {
 }
 
 const USERS = [
-  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com' },
-  { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com' },
+  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com', password: '140926' },
+  { name: 'Viemar Cruz', email: 'viemarjorge@hotmail.com', password: 'cachaca' },
 ];
 
 export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedEmail, setSelectedEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [inputPassword, setInputPassword] = useState('');
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = (email: string, password: string) => {
     setError('');
     setLoading(true);
 
-    try {
-      if (!supabase) {
-        setError('Erro ao conectar com Supabase');
+    // Simular delay de processamento
+    setTimeout(() => {
+      const user = USERS.find(u => u.email === email);
+      
+      if (!user) {
+        setError('Usuário não encontrado');
+        setLoading(false);
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (signInError) {
-        setError(`Erro ao fazer login: ${signInError.message}`);
+      if (user.password !== password) {
+        setError('Senha incorreta');
+        setLoading(false);
         return;
       }
 
+      // Salvar usuário no localStorage
+      localStorage.setItem('currentUser', JSON.stringify({ email: user.email, name: user.name }));
+      
       onLoginSuccess();
-    } catch (err) {
-      setError('Erro ao fazer login');
-      console.error(err);
-    } finally {
       setLoading(false);
-    }
+    }, 500);
   };
 
   return (
@@ -103,7 +101,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              handleLogin(selectedEmail, password);
+              handleLogin(selectedEmail, inputPassword);
             }}
             className="bg-white rounded-xl shadow-lg p-6 space-y-4"
           >
@@ -117,7 +115,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
                 className="text-sm text-blue-600 hover:underline"
                 onClick={() => {
                   setSelectedEmail('');
-                  setPassword('');
+                  setInputPassword('');
                   setError('');
                 }}
               >
@@ -129,8 +127,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               <label className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={inputPassword}
+                onChange={(e) => setInputPassword(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Digite a senha"
                 required
@@ -139,7 +137,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
             <button
               type="submit"
-              disabled={loading || !password}
+              disabled={loading || !inputPassword}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition"
             >
               {loading ? 'Entrando...' : 'Entrar'}
