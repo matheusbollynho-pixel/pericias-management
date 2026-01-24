@@ -1,7 +1,8 @@
 ﻿import { useState } from 'react';
 import type { Pericia } from '../types/pericia';
-import { FileText, Plus, Search, Pencil, Printer } from 'lucide-react';
+import { FileText, Plus, Search, Pencil, Printer, Trash2 } from 'lucide-react';
 import PericiaForm from '../components/PericiaForm';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import { usePerencias } from '../hooks/usePerencias';
 import { generatePericiaPDF } from '../lib/pdfGenerator';
 interface DashboardProps {
@@ -18,7 +19,9 @@ export default function Dashboard({ userEmail }: DashboardProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingPericia, setEditingPericia] = useState<Pericia | null>(null);
-  const { pericias, isLoading, createPericia, updatePericia } = usePerencias();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [periciaToDelete, setPericiaToDelete] = useState<Pericia | null>(null);
+  const { pericias, isLoading, createPericia, updatePericia, deletePericia, isDeleting } = usePerencias();
   const peritoNome = getPeritoName(userEmail);
 
   const handleSubmitPericia = (data: any) => {
@@ -31,7 +34,20 @@ export default function Dashboard({ userEmail }: DashboardProps) {
     } else {
       createPericia(payload as any);
     }
-    setShowForm(false);
+    
+
+  const handleDeleteClick = (pericia: Pericia) => {
+    setPericiaToDelete(pericia);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = (password: string) => {
+    if (periciaToDelete) {
+      deletePericia(periciaToDelete.id);
+      setShowDeleteModal(false);
+      setPericiaToDelete(null);
+    }
+  };setShowForm(false);
     setEditingPericia(null);
   };
 
@@ -160,6 +176,13 @@ export default function Dashboard({ userEmail }: DashboardProps) {
                         onClick={() => generatePericiaPDF(pericia, peritoNome)}
                         className="text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-full transition-colors"
                         title="Imprimir PDF"
+                      <button
+                        onClick={() => handleDeleteClick(pericia)}
+                        className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-full transition-colors"
+                        title="Excluir Perícia"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                       >
                         <Printer className="w-4 h-4" />
                       </button>
@@ -173,6 +196,17 @@ export default function Dashboard({ userEmail }: DashboardProps) {
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
+
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        periodeName={periciaToDelete?.processo_numero || periciaToDelete?.processo || 'sem número'}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setShowDeleteModal(false);
+          setPericiaToDelete(null);
+        }}
+        isLoading={isDeleting}
+      />
                     </div>
                   </td>
                 </tr>
