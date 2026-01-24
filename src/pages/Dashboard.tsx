@@ -198,19 +198,6 @@ export default function Dashboard({ userEmail }: DashboardProps) {
                       </button>
                     </div>
                   </td>
-
-      <DeleteConfirmModal
-        isOpen={showDeleteModal}
-        periodeName={periciaToDelete?.processo_numero || periciaToDelete?.processo || 'sem número'}
-        onConfirm={handleConfirmDelete}
-        onCancel={() => {
-          setShowDeleteModal(false);
-          setPericiaToDelete(null);
-        }}
-        isLoading={isDeleting}
-      />
-                    </div>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -229,6 +216,17 @@ export default function Dashboard({ userEmail }: DashboardProps) {
           defaultPeritoNome={peritoNome}
         />
       )}
+
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        periodeName={periciaToDelete?.processo_numero || periciaToDelete?.processo || 'sem número'}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setShowDeleteModal(false);
+          setPericiaToDelete(null);
+        }}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
