@@ -4,6 +4,8 @@ import Dashboard from './pages/Dashboard';
 import { safeStorage } from './lib/safeStorage';
 import './App.css';
 
+// Safari iPad compatibility - v2
+
 interface CurrentUser {
   email: string;
   name: string;
