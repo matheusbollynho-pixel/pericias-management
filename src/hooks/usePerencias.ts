@@ -31,25 +31,17 @@ export function usePerencias() {
     const loadPericias = async () => {
       try {
         setIsLoading(true);
-        console.log('🔍 Tentando carregar perícias...', { userEmail, hasSupabase: !!supabase });
         
         if (supabase && userEmail) {
-          // TEMPORÁRIO: Buscar todas as perícias para debug
-          console.log('🔍 Buscando TODAS as perícias (sem filtro de owner)...');
+          // Buscar todas as perícias
           const { data: dataAll, error: errorAll } = await supabase
             .from('pericias')
             .select('*')
             .order('created_at', { ascending: false });
           
-          console.log('📊 Total de perícias no banco:', dataAll?.length);
-          if (dataAll && dataAll.length > 0) {
-            console.log('📋 Owners das perícias:', dataAll.map(p => p.owner));
-          }
-          
           if (!errorAll && dataAll) {
             // Filtrar apenas pelo email logado
             const filtered = dataAll.filter((p: any) => p.owner === userEmail);
-            console.log('✅ Perícias filtradas para o usuário:', filtered.length);
             setPericias(filtered as Pericia[]);
             safeStorage.setItem(backupKey, JSON.stringify(filtered));
             setIsLoading(false);
@@ -58,15 +50,13 @@ export function usePerencias() {
         }
         
         // Fallback para localStorage
-        console.log('🔄 Tentando carregar do localStorage...');
         const saved = safeStorage.getItem(storageKey);
         if (saved) {
           const parsed = JSON.parse(saved);
-          console.log('📦 Carregado do localStorage:', parsed.length);
           setPericias(parsed);
         }
       } catch (error) {
-        console.error('❌ Erro ao carregar perícias:', error);
+        console.error('Erro ao carregar perícias:', error);
         // Tenta recuperar do backup
         const backup = safeStorage.getItem(backupKey);
         if (backup) {

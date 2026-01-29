@@ -76,11 +76,6 @@ export default function Dashboard({ userEmail }: DashboardProps) {
         <p className="text-gray-600 mt-2">
           Gerenciamento de perícias de insalubridade e periculosidade
         </p>
-        {/* DEBUG INFO */}
-        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
-          <p><strong>Debug:</strong> {pericias.length} perícias carregadas do Supabase</p>
-          <p className="text-xs text-gray-600">User: {userEmail}</p>
-        </div>
       </div>
 
       <div className="flex gap-4 mb-6">
