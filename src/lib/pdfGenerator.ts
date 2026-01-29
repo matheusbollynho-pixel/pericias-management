@@ -80,6 +80,44 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 2;
   }
 
+  // Informações Adicionais do Processo
+  const hasInfoAdicionais = pericia.data_admissao || pericia.data_demissao || pericia.horario_pericia || pericia.local_pericia || pericia.funcao_reclamante;
+  
+  if (hasInfoAdicionais) {
+    addSectionTitle('Informações Adicionais do Processo');
+    addField('Data da Admissão', pericia.data_admissao);
+    addField('Data da Demissão', pericia.data_demissao);
+    addField('Horário da Perícia', pericia.horario_pericia);
+    addField('Local da Perícia', pericia.local_pericia);
+    addField('Função do Reclamante', pericia.funcao_reclamante);
+    yPos += 5;
+  }
+
+  // Checklist de Documentação
+  if (pericia.documentacao) {
+    const doc_checklist = pericia.documentacao as any;
+    const hasDocumentacao = Object.values(doc_checklist).some(v => v === true);
+    
+    if (hasDocumentacao) {
+      addSectionTitle('Checklist de Documentação Verificada');
+      doc.setFontSize(9);
+      if (doc_checklist.pca) doc.text('✓ PCA (Programa de Conservação Auditiva)', 25, yPos), yPos += 4;
+      if (doc_checklist.ppr) doc.text('✓ PPR (Programa de Proteção Respiratória)', 25, yPos), yPos += 4;
+      if (doc_checklist.laudo_insalubridade) doc.text('✓ Laudo de Insalubridade', 25, yPos), yPos += 4;
+      if (doc_checklist.laudo_periculosidade) doc.text('✓ Laudo de Periculosidade', 25, yPos), yPos += 4;
+      if (doc_checklist.pgr) doc.text('✓ PGR (Programa de Gerenciamento de Riscos)', 25, yPos), yPos += 4;
+      if (doc_checklist.pcmso) doc.text('✓ PCMSO (Programa de Controle Médico de Saúde Ocupacional)', 25, yPos), yPos += 4;
+      if (doc_checklist.ltcat) doc.text('✓ LTCAT (Laudo Técnico das Condições Ambientais do Trabalho)', 25, yPos), yPos += 4;
+      if (doc_checklist.ordens_servico) doc.text('✓ Ordens de Serviço', 25, yPos), yPos += 4;
+      if (doc_checklist.ppp) doc.text('✓ PPP (Perfil Profissiográfico Previdenciário)', 25, yPos), yPos += 4;
+      if (doc_checklist.avaliacoes_dosimetria) doc.text('✓ Avaliações Existentes / Dosimetria', 25, yPos), yPos += 4;
+      if (doc_checklist.fispqs) doc.text('✓ FISPQs (Ficha de Informação de Segurança de Produtos Químicos)', 25, yPos), yPos += 4;
+      if (doc_checklist.ficha_entrega_epis) doc.text('✓ Ficha de Entrega de EPIs', 25, yPos), yPos += 4;
+      doc.setFontSize(10);
+      yPos += 5;
+    }
+  }
+
   // III. Objetivo da Perícia
   if (pericia.objetivo_determinar_insalubridade || pericia.objetivo_determinar_periculosidade || pericia.objetivo_avaliar_exposicao || pericia.objetivo_outros) {
     addSectionTitle('III. Objetivo da Perícia');
@@ -194,6 +232,21 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 5;
   }
 
+  // Descrição de Ambientes e Atividades
+  if (pericia.descricao_ambientes || pericia.descricao_atividades) {
+    addSectionTitle('Descrição de Ambientes e Atividades');
+    addField('Descrição dos Ambientes de Trabalho', pericia.descricao_ambientes);
+    addField('Descrição das Atividades Realizadas', pericia.descricao_atividades);
+    yPos += 5;
+  }
+
+  // Classificação de Riscos Ergonômicos
+  if (pericia.riscos_ergonomicos) {
+    addSectionTitle('Classificação de Riscos Ergonômicos');
+    addField('Detalhamento dos Riscos Ergonômicos', pericia.riscos_ergonomicos);
+    yPos += 5;
+  }
+
   // VI. Conclusões da Perícia
   const hasConclusoes = pericia.existe_insalubridade === true || pericia.existe_periculosidade === true || !!pericia.parecer_perito;
   
@@ -207,6 +260,32 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     }
     addField('Parecer Técnico', pericia.parecer_perito);
     yPos += 5;
+  }
+
+  // Controle de EPIs
+  if (pericia.epis && pericia.epis.length > 0) {
+    addSectionTitle('Controle de EPIs (Equipamentos de Proteção Individual)');
+    pericia.epis.forEach((epi: any, index: number) => {
+      checkPageBreak();
+      doc.setFont('helvetica', 'bold');
+      doc.text(`EPI #${index + 1}`, 20, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      if (epi.tipo) {
+        doc.text(`Tipo: ${epi.tipo}`, 25, yPos);
+        yPos += 5;
+      }
+      if (epi.numero_ca) {
+        doc.text(`Número do CA: ${epi.numero_ca}`, 25, yPos);
+        yPos += 5;
+      }
+      if (epi.validade) {
+        doc.text(`Validade: ${epi.validade}`, 25, yPos);
+        yPos += 5;
+      }
+      yPos += 2;
+    });
+    yPos += 3;
   }
 
   // VII. Observações Finais

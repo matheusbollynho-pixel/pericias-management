@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import { safeStorage } from '../lib/safeStorage';
 import type { Pericia } from '../types/pericia';
 import { useState, useEffect, useMemo } from 'react';
 
@@ -14,7 +15,7 @@ export function usePerencias() {
 
   // Obter email do usuário logado do localStorage (login local)
   useEffect(() => {
-    const user = localStorage.getItem('currentUser');
+    const user = safeStorage.getItem('currentUser');
     if (user) {
       try {
         const { email } = JSON.parse(user);
@@ -30,51 +31,44 @@ export function usePerencias() {
     const loadPericias = async () => {
       try {
         setIsLoading(true);
+        console.log('🔍 Tentando carregar perícias...', { userEmail, hasSupabase: !!supabase });
         
         if (supabase && userEmail) {
-          // Primeiro tenta com filtro por owner (se existir no schema).
-          let data: any[] | null = null;
-          try {
-            const { data: dataOwner, error: errorOwner } = await supabase
-              .from('pericias')
-              .select('*')
-              .eq('owner', userEmail)
-              .order('created_at', { ascending: false });
-            if (!errorOwner) {
-              data = dataOwner as any[];
-            }
-          } catch (e: any) {
-            console.error('Erro ao filtrar por owner:', e?.message);
+          // TEMPORÁRIO: Buscar todas as perícias para debug
+          console.log('🔍 Buscando TODAS as perícias (sem filtro de owner)...');
+          const { data: dataAll, error: errorAll } = await supabase
+            .from('pericias')
+            .select('*')
+            .order('created_at', { ascending: false });
+          
+          console.log('📊 Total de perícias no banco:', dataAll?.length);
+          if (dataAll && dataAll.length > 0) {
+            console.log('📋 Owners das perícias:', dataAll.map(p => p.owner));
           }
-
-          // Se coluna owner não existir, busca sem filtro
-          if (!data) {
-            const { data: dataAll, error: errorAll } = await supabase
-              .from('pericias')
-              .select('*')
-              .order('created_at', { ascending: false });
-            if (!errorAll && dataAll) {
-              data = dataAll as any[];
-            }
-          }
-
-          if (data) {
-            setPericias(data as Pericia[]);
-            localStorage.setItem(backupKey, JSON.stringify(data));
+          
+          if (!errorAll && dataAll) {
+            // Filtrar apenas pelo email logado
+            const filtered = dataAll.filter((p: any) => p.owner === userEmail);
+            console.log('✅ Perícias filtradas para o usuário:', filtered.length);
+            setPericias(filtered as Pericia[]);
+            safeStorage.setItem(backupKey, JSON.stringify(filtered));
             setIsLoading(false);
             return;
           }
         }
         
         // Fallback para localStorage
-        const saved = localStorage.getItem(storageKey);
+        console.log('🔄 Tentando carregar do localStorage...');
+        const saved = safeStorage.getItem(storageKey);
         if (saved) {
-          setPericias(JSON.parse(saved));
+          const parsed = JSON.parse(saved);
+          console.log('📦 Carregado do localStorage:', parsed.length);
+          setPericias(parsed);
         }
       } catch (error) {
-        console.error('Erro ao carregar perícias:', error);
+        console.error('❌ Erro ao carregar perícias:', error);
         // Tenta recuperar do backup
-        const backup = localStorage.getItem(backupKey);
+        const backup = safeStorage.getItem(backupKey);
         if (backup) {
           setPericias(JSON.parse(backup));
         }
@@ -90,8 +84,8 @@ export function usePerencias() {
 
   const savePericias = (newPericias: Pericia[]) => {
     setPericias(newPericias);
-    localStorage.setItem(storageKey, JSON.stringify(newPericias));
-    localStorage.setItem(backupKey, JSON.stringify(newPericias));
+    safeStorage.setItem(storageKey, JSON.stringify(newPericias));
+    safeStorage.setItem(backupKey, JSON.stringify(newPericias));
   };
 
   const createPericia = useMutation({
@@ -149,6 +143,26 @@ export function usePerencias() {
         agentes_fisicos: pericia.agentes_fisicos,
         agentes_biologicos: pericia.agentes_biologicos,
         condicoes_perigosas: pericia.condicoes_perigosas,
+        
+        // Informações Adicionais do Processo
+        data_admissao: pericia.data_admissao || null,
+        data_demissao: pericia.data_demissao || null,
+        horario_pericia: pericia.horario_pericia,
+        local_pericia: pericia.local_pericia,
+        funcao_reclamante: pericia.funcao_reclamante,
+        
+        // Descrição de Ambientes e Atividades
+        descricao_ambientes: pericia.descricao_ambientes,
+        descricao_atividades: pericia.descricao_atividades,
+        
+        // Riscos Ergonômicos
+        riscos_ergonomicos: pericia.riscos_ergonomicos,
+        
+        // Checklist de Documentação
+        documentacao: pericia.documentacao,
+        
+        // EPIs
+        epis: pericia.epis || [],
         
         // Conclusões
         existe_insalubridade: pericia.existe_insalubridade || false,
@@ -269,6 +283,26 @@ export function usePerencias() {
         agentes_fisicos: data.agentes_fisicos,
         agentes_biologicos: data.agentes_biologicos,
         condicoes_perigosas: data.condicoes_perigosas,
+        
+        // Informações Adicionais do Processo
+        data_admissao: data.data_admissao || null,
+        data_demissao: data.data_demissao || null,
+        horario_pericia: data.horario_pericia,
+        local_pericia: data.local_pericia,
+        funcao_reclamante: data.funcao_reclamante,
+        
+        // Descrição de Ambientes e Atividades
+        descricao_ambientes: data.descricao_ambientes,
+        descricao_atividades: data.descricao_atividades,
+        
+        // Riscos Ergonômicos
+        riscos_ergonomicos: data.riscos_ergonomicos,
+        
+        // Checklist de Documentação
+        documentacao: data.documentacao,
+        
+        // EPIs
+        epis: data.epis || [],
         
         // Conclusões
         existe_insalubridade: data.existe_insalubridade || false,

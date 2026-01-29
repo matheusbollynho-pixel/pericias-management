@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Pericia, Participante, InsalubridadeGrau } from '../types/pericia';
+import type { Pericia, Participante, InsalubridadeGrau, EPI } from '../types/pericia';
 import { X, Plus, Trash2 } from 'lucide-react';
 
 interface PericiaFormProps {
@@ -11,6 +11,7 @@ interface PericiaFormProps {
 
 export default function PericiaForm({ onClose, onSubmit, initialData, defaultPeritoNome }: PericiaFormProps) {
   const [participantes, setParticipantes] = useState<Participante[]>(initialData?.participantes || []);
+  const [epis, setEpis] = useState<EPI[]>(initialData?.epis || []);
   const [formData, setFormData] = useState({
     processo_numero: initialData?.processo_numero || '',
     vara: initialData?.vara || '',
@@ -65,6 +66,36 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
     agentes_biologicos: initialData?.agentes_biologicos || '',
     condicoes_perigosas: initialData?.condicoes_perigosas || '',
     
+    // Informações do Processo (novos campos)
+    data_admissao: initialData?.data_admissao || '',
+    data_demissao: initialData?.data_demissao || '',
+    horario_pericia: initialData?.horario_pericia || '',
+    local_pericia: initialData?.local_pericia || '',
+    funcao_reclamante: initialData?.funcao_reclamante || '',
+    
+    // Descrição de Ambientes e Atividades
+    descricao_ambientes: initialData?.descricao_ambientes || '',
+    descricao_atividades: initialData?.descricao_atividades || '',
+    
+    // Classificação de Riscos Ergonômicos
+    riscos_ergonomicos: initialData?.riscos_ergonomicos || '',
+    
+    // Checklist de Documentação
+    documentacao: {
+      pca: initialData?.documentacao?.pca || false,
+      ppr: initialData?.documentacao?.ppr || false,
+      laudo_insalubridade: initialData?.documentacao?.laudo_insalubridade || false,
+      laudo_periculosidade: initialData?.documentacao?.laudo_periculosidade || false,
+      pgr: initialData?.documentacao?.pgr || false,
+      pcmso: initialData?.documentacao?.pcmso || false,
+      ltcat: initialData?.documentacao?.ltcat || false,
+      ordens_servico: initialData?.documentacao?.ordens_servico || false,
+      ppp: initialData?.documentacao?.ppp || false,
+      avaliacoes_dosimetria: initialData?.documentacao?.avaliacoes_dosimetria || false,
+      fispqs: initialData?.documentacao?.fispqs || false,
+      ficha_entrega_epis: initialData?.documentacao?.ficha_entrega_epis || false,
+    },
+    
     // Conclusões
     existe_insalubridade: initialData?.existe_insalubridade || false,
     grau_insalubridade: initialData?.grau_insalubridade || ('medio' as InsalubridadeGrau),
@@ -99,11 +130,30 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
     setParticipantes(newParticipantes);
   };
 
+  const handleAddEPI = () => {
+    setEpis([...epis, {
+      tipo: '',
+      numero_ca: '',
+      validade: '',
+    }]);
+  };
+
+  const handleRemoveEPI = (index: number) => {
+    setEpis(epis.filter((_, i) => i !== index));
+  };
+
+  const handleEPIChange = (index: number, field: keyof EPI, value: string) => {
+    const newEpis = [...epis];
+    newEpis[index] = { ...newEpis[index], [field]: value };
+    setEpis(newEpis);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
       ...formData,
       participantes,
+      epis,
     });
   };
 
@@ -192,116 +242,10 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
             </div>
           </div>
 
-          {/* Seção VIII: Participantes */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b pb-2">
-              <h3 className="text-lg font-semibold text-gray-900">
-                II. Participantes da Perícia
-              </h3>
-              <button
-                type="button"
-                onClick={handleAddParticipante}
-                className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
-              >
-                <Plus className="w-4 h-4" />
-                Adicionar
-              </button>
-            </div>
-            {participantes.map((participante, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">
-                    Participante #{index + 1}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveParticipante(index)}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <input
-                    type="text"
-                    placeholder="Nome"
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    value={participante.nome}
-                    onChange={(e) => handleParticipanteChange(index, 'nome', e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Cargo/Função"
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    value={participante.cargo}
-                    onChange={(e) => handleParticipanteChange(index, 'cargo', e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Tipo/Categoria"
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    value={participante.tipo}
-                    onChange={(e) => handleParticipanteChange(index, 'tipo', e.target.value)}
-                  />
-                </div>
-                <textarea
-                  rows={2}
-                  placeholder="Falas e observações do participante..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  value={participante.falas}
-                  onChange={(e) => handleParticipanteChange(index, 'falas', e.target.value)}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Seção III: Objetivo da Perícia */}
+          {/* Seção II: Identificação das Partes */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              III. Objetivo da Perícia
-            </h3>
-            <div className="space-y-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.objetivo_determinar_insalubridade}
-                  onChange={(e) => setFormData({ ...formData, objetivo_determinar_insalubridade: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded"
-                />
-                <span className="text-sm text-gray-700">Determinar a existência de insalubridade</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.objetivo_determinar_periculosidade}
-                  onChange={(e) => setFormData({ ...formData, objetivo_determinar_periculosidade: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded"
-                />
-                <span className="text-sm text-gray-700">Determinar a existência de periculosidade</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.objetivo_avaliar_exposicao}
-                  onChange={(e) => setFormData({ ...formData, objetivo_avaliar_exposicao: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded"
-                />
-                <span className="text-sm text-gray-700">Apreciar os níveis de exposição a agentes insalubres ou perigosos</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Outros objetivos (especificar)..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                value={formData.objetivo_outros}
-                onChange={(e) => setFormData({ ...formData, objetivo_outros: e.target.value })}
-              />
-            </div>
-          </div>
-
-          {/* Seção IV: Partes */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              IV. Identificação das Partes
+              II. Identificação das Partes
             </h3>
             
             {/* Parte Requerente */}
@@ -409,10 +353,337 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
             </div>
           </div>
 
+          {/* Seção III: Participantes */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b pb-2">
+              <h3 className="text-lg font-semibold text-gray-900">
+                III. Participantes da Perícia
+              </h3>
+              <button
+                type="button"
+                onClick={handleAddParticipante}
+                className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
+              >
+                <Plus className="w-4 h-4" />
+                Adicionar
+              </button>
+            </div>
+            {participantes.map((participante, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">
+                    Participante #{index + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveParticipante(index)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <input
+                    type="text"
+                    placeholder="Nome"
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    value={participante.nome}
+                    onChange={(e) => handleParticipanteChange(index, 'nome', e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Cargo/Função"
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    value={participante.cargo}
+                    onChange={(e) => handleParticipanteChange(index, 'cargo', e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Tipo/Categoria"
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    value={participante.tipo}
+                    onChange={(e) => handleParticipanteChange(index, 'tipo', e.target.value)}
+                  />
+                </div>
+                <textarea
+                  rows={2}
+                  placeholder="Falas e observações do participante..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  value={participante.falas}
+                  onChange={(e) => handleParticipanteChange(index, 'falas', e.target.value)}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Seção: Informações Adicionais do Processo */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+              Informações Adicionais do Processo
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Data da Admissão
+                </label>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  value={formData.data_admissao}
+                  onChange={(e) => setFormData({ ...formData, data_admissao: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Data da Demissão
+                </label>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  value={formData.data_demissao}
+                  onChange={(e) => setFormData({ ...formData, data_demissao: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Horário da Perícia
+                </label>
+                <input
+                  type="time"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  value={formData.horario_pericia}
+                  onChange={(e) => setFormData({ ...formData, horario_pericia: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Local da Perícia
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Endereço completo onde será realizada a perícia"
+                  value={formData.local_pericia}
+                  onChange={(e) => setFormData({ ...formData, local_pericia: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Função do Reclamante
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Cargo/função exercida pelo reclamante"
+                  value={formData.funcao_reclamante}
+                  onChange={(e) => setFormData({ ...formData, funcao_reclamante: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Seção: Checklist de Documentação */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+              Checklist de Documentação a ser Verificada
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.pca}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, pca: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">PCA (Programa de Conservação Auditiva)</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.ppr}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, ppr: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">PPR (Programa de Proteção Respiratória)</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.laudo_insalubridade}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, laudo_insalubridade: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">Laudo de Insalubridade</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.laudo_periculosidade}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, laudo_periculosidade: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">Laudo de Periculosidade</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.pgr}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, pgr: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">PGR (Programa de Gerenciamento de Riscos)</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.pcmso}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, pcmso: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">PCMSO (Programa de Controle Médico de Saúde Ocupacional)</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.ltcat}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, ltcat: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">LTCAT (Laudo Técnico das Condições Ambientais do Trabalho)</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.ordens_servico}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, ordens_servico: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">Ordens de Serviço</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.ppp}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, ppp: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">PPP (Perfil Profissiográfico Previdenciário)</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.avaliacoes_dosimetria}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, avaliacoes_dosimetria: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">Avaliações Existentes / Dosimetria</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.fispqs}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, fispqs: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">FISPQs (Ficha de Informação de Segurança de Produtos Químicos)</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.documentacao.ficha_entrega_epis}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    documentacao: { ...formData.documentacao, ficha_entrega_epis: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">Ficha de Entrega de EPIs</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Seção IV: Objetivo da Perícia */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+              III. Objetivo da Perícia
+            </h3>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.objetivo_determinar_insalubridade}
+                  onChange={(e) => setFormData({ ...formData, objetivo_determinar_insalubridade: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">Determinar a existência de insalubridade</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.objetivo_determinar_periculosidade}
+                  onChange={(e) => setFormData({ ...formData, objetivo_determinar_periculosidade: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">Determinar a existência de periculosidade</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.objetivo_avaliar_exposicao}
+                  onChange={(e) => setFormData({ ...formData, objetivo_avaliar_exposicao: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="text-sm text-gray-700">Apreciar os níveis de exposição a agentes insalubres ou perigosos</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Outros objetivos (especificar)..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                value={formData.objetivo_outros}
+                onChange={(e) => setFormData({ ...formData, objetivo_outros: e.target.value })}
+              />
+            </div>
+          </div>
+
           {/* Seção V: Metodologia e Procedimentos */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              IV. Metodologia e Procedimentos
+              V. Metodologia e Procedimentos
             </h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -478,10 +749,10 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
             </div>
           </div>
 
-          {/* Seção V: Agentes e Riscos */}
+          {/* Seção VI: Agentes e Riscos */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              V. Agentes Insalubres e Perigosos
+              VI. Agentes Insalubres e Perigosos
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -535,10 +806,60 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
             </div>
           </div>
 
-          {/* Seção VI: Conclusões */}
+          {/* Seção: Descrição de Ambientes e Atividades */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              VI. Conclusões da Perícia
+              Descrição de Ambientes e Atividades
+            </h3>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Descrição dos Ambientes de Trabalho
+              </label>
+              <textarea
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="Descreva detalhadamente os ambientes de trabalho (layout, ventilação, iluminação, etc.)..."
+                value={formData.descricao_ambientes}
+                onChange={(e) => setFormData({ ...formData, descricao_ambientes: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Descrição das Atividades Realizadas
+              </label>
+              <textarea
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="Descreva as atividades laborais realizadas, processos de trabalho, jornada, etc..."
+                value={formData.descricao_atividades}
+                onChange={(e) => setFormData({ ...formData, descricao_atividades: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Seção: Riscos Ergonômicos */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+              Classificação de Riscos Ergonômicos
+            </h3>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Detalhamento dos Riscos Ergonômicos
+              </label>
+              <textarea
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="Descreva os riscos ergonômicos identificados (postura, movimentos repetitivos, levantamento de peso, etc.)..."
+                value={formData.riscos_ergonomicos}
+                onChange={(e) => setFormData({ ...formData, riscos_ergonomicos: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Seção VII: Conclusões */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+              VII. Conclusões da Perícia
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
@@ -598,10 +919,86 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
             </div>
           </div>
 
-          {/* Seção VII: Observações Finais */}
+          {/* Seção: Controle de EPIs */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b pb-2">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Controle de EPIs (Equipamentos de Proteção Individual)
+              </h3>
+              <button
+                type="button"
+                onClick={handleAddEPI}
+                className="flex items-center gap-2 px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700"
+              >
+                <Plus className="w-4 h-4" />
+                Adicionar EPI
+              </button>
+            </div>
+            {epis.length === 0 ? (
+              <p className="text-sm text-gray-500 italic">
+                Nenhum EPI cadastrado. Clique em "Adicionar EPI" para incluir.
+              </p>
+            ) : (
+              epis.map((epi, index) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-3 bg-gray-50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      EPI #{index + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveEPI(index)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Tipo de EPI *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ex: Capacete, Óculos, Protetor Auricular"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                        value={epi.tipo}
+                        onChange={(e) => handleEPIChange(index, 'tipo', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Número do CA
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ex: 12345"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                        value={epi.numero_ca}
+                        onChange={(e) => handleEPIChange(index, 'numero_ca', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Validade
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                        value={epi.validade}
+                        onChange={(e) => handleEPIChange(index, 'validade', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Seção VIII: Observações Finais */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              VII. Observações Finais
+              VIII. Observações Finais
             </h3>
             <div>
               <textarea

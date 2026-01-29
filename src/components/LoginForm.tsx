@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { AlertCircle, LogIn } from 'lucide-react';
+import { safeStorage } from '../lib/safeStorage';
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
 }
 
 const USERS = [
-  { name: 'Tarciana Ellen', email: 'tarcianaellen@outlook.com', password: '140926' },
+  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com', password: '140926' },
   { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com', password: 'viemarvjc' },
 ];
 
@@ -37,7 +38,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
       }
 
       // Salvar usuário no localStorage
-      localStorage.setItem('currentUser', JSON.stringify({ email: user.email, name: user.name }));
+      safeStorage.setItem('currentUser', JSON.stringify({ email: user.email, name: user.name }));
       
       onLoginSuccess();
       setLoading(false);

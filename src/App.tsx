@@ -1,6 +1,8 @@
 ﻿import { useEffect, useState } from 'react';
 import LoginForm from './components/LoginForm';
 import Dashboard from './pages/Dashboard';
+import DebugConsole from './components/DebugConsole';
+import { safeStorage } from './lib/safeStorage';
 import './App.css';
 
 interface CurrentUser {
@@ -14,7 +16,7 @@ function App() {
 
   useEffect(() => {
     // Verificar se existe usuário logado no localStorage
-    const savedUser = localStorage.getItem('currentUser');
+    const savedUser = safeStorage.getItem('currentUser');
     if (savedUser) {
       try {
         setCurrentUser(JSON.parse(savedUser));
@@ -26,7 +28,7 @@ function App() {
   }, []);
 
   const handleLoginSuccess = () => {
-    const savedUser = localStorage.getItem('currentUser');
+    const savedUser = safeStorage.getItem('currentUser');
     if (savedUser) {
       try {
         const user = JSON.parse(savedUser);
@@ -38,7 +40,7 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
+    safeStorage.removeItem('currentUser');
     setCurrentUser(null);
   };
 
@@ -74,6 +76,7 @@ function App() {
         </div>
       </div>
       <Dashboard userEmail={currentUser.email} />
+      <DebugConsole />
     </div>
   );
 }

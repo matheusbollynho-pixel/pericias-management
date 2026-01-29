@@ -10,6 +10,7 @@ interface DashboardProps {
 }
 
 const getPeritoName = (email: string): string => {
+  if (email === 'ellentarcy@gmail.com') return 'Tarciana Ellen';
   if (email === 'tarcianaellen@outlook.com') return 'Tarciana Ellen';
   if (email === 'viemarcruz@hotmail.com') return 'Viemar Cruz';
   return '';
@@ -43,7 +44,7 @@ export default function Dashboard({ userEmail }: DashboardProps) {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = (_password: string) => {
     if (periciaToDelete) {
       deletePericia(periciaToDelete.id);
       setShowDeleteModal(false);
@@ -75,6 +76,11 @@ export default function Dashboard({ userEmail }: DashboardProps) {
         <p className="text-gray-600 mt-2">
           Gerenciamento de perícias de insalubridade e periculosidade
         </p>
+        {/* DEBUG INFO */}
+        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+          <p><strong>Debug:</strong> {pericias.length} perícias carregadas do Supabase</p>
+          <p className="text-xs text-gray-600">User: {userEmail}</p>
+        </div>
       </div>
 
       <div className="flex gap-4 mb-6">

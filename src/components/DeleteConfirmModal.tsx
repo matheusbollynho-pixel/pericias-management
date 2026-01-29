@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AlertTriangle, Lock } from 'lucide-react';
+import { safeStorage } from '../lib/safeStorage';
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -10,7 +11,7 @@ interface DeleteConfirmModalProps {
 }
 
 const USERS = [
-  { name: 'Tarciana Ellen', email: 'tarcianaellen@outlook.com', password: '140926' },
+  { name: 'Tarciana Ellen', email: 'ellentarcy@gmail.com', password: '140926' },
   { name: 'Viemar Cruz', email: 'viemarcruz@hotmail.com', password: 'viemarvjc' },
 ];
 
@@ -28,7 +29,9 @@ export default function DeleteConfirmModal({
     setError('');
 
     // Verificar se a senha pertence a algum usuário
-    const user = localStorage.getItem('currentUser');
+    const user = safeStorage.getItem('currentUser');
+    console.log('Usuário do localStorage:', user);
+    
     if (!user) {
       setError('Usuário não identificado');
       return;
@@ -36,21 +39,29 @@ export default function DeleteConfirmModal({
 
     try {
       const { email } = JSON.parse(user);
+      console.log('Email do usuário:', email);
+      
       const currentUser = USERS.find(u => u.email === email);
+      console.log('Usuário encontrado:', currentUser);
 
       if (!currentUser) {
         setError('Usuário inválido');
         return;
       }
 
+      console.log('Senha digitada:', password);
+      console.log('Senha esperada:', currentUser.password);
+
       if (currentUser.password !== password) {
         setError('Senha incorreta');
         return;
       }
 
+      console.log('Senha correta! Executando onConfirm...');
       onConfirm(password);
       setPassword('');
     } catch (e) {
+      console.error('Erro ao validar senha:', e);
       setError('Erro ao validar senha');
     }
   };

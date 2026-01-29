@@ -10,6 +10,27 @@ export interface Participante {
   falas?: string;
 }
 
+export interface DocumentacaoChecklist {
+  pca?: boolean; // Programa de Conservação Auditiva
+  ppr?: boolean; // Programa de Proteção Respiratória
+  laudo_insalubridade?: boolean;
+  laudo_periculosidade?: boolean;
+  pgr?: boolean; // Programa de Gerenciamento de Riscos
+  pcmso?: boolean; // Programa de Controle Médico de Saúde Ocupacional
+  ltcat?: boolean; // Laudo Técnico das Condições Ambientais do Trabalho
+  ordens_servico?: boolean;
+  ppp?: boolean; // Perfil Profissiográfico Previdenciário
+  avaliacoes_dosimetria?: boolean;
+  fispqs?: boolean; // Ficha de Informação de Segurança de Produtos Químicos
+  ficha_entrega_epis?: boolean;
+}
+
+export interface EPI {
+  tipo: string;
+  numero_ca: string;
+  validade: string;
+}
+
 export interface Pericia {
   id: string;
   processo_numero?: string; // Campo do formulário
@@ -68,6 +89,26 @@ export interface Pericia {
   agentes_fisicos?: string;
   agentes_biologicos?: string;
   condicoes_perigosas?: string;
+  
+  // Informações do Processo (novos campos)
+  data_admissao?: string;
+  data_demissao?: string;
+  horario_pericia?: string;
+  local_pericia?: string;
+  funcao_reclamante?: string;
+  
+  // Descrição de Ambientes e Atividades
+  descricao_ambientes?: string;
+  descricao_atividades?: string;
+  
+  // Classificação de Riscos Ergonômicos
+  riscos_ergonomicos?: string;
+  
+  // Checklist de Documentação
+  documentacao?: DocumentacaoChecklist;
+  
+  // EPIs (Equipamentos de Proteção Individual)
+  epis?: EPI[];
   
   // Conclusões
   existe_insalubridade?: boolean;
