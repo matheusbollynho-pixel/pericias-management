@@ -1,5 +1,4 @@
 {
-  "name": "pericias",
   "buildCommand": "npm run build",
   "framework": "vite",
   "installCommand": "npm install",
@@ -26,7 +25,7 @@
       ]
     },
     {
-      "source": "/src/.*",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
