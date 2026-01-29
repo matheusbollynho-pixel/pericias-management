@@ -1,7 +1,6 @@
 ﻿import { useEffect, useState } from 'react';
 import LoginForm from './components/LoginForm';
 import Dashboard from './pages/Dashboard';
-import DebugConsole from './components/DebugConsole';
 import { safeStorage } from './lib/safeStorage';
 import './App.css';
 
@@ -76,7 +75,6 @@ function App() {
         </div>
       </div>
       <Dashboard userEmail={currentUser.email} />
-      <DebugConsole />
     </div>
   );
 }
