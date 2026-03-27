@@ -250,7 +250,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
             
             {/* Parte Requerente */}
             <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-              <h4 className="font-medium text-gray-900">Parte Requerente</h4>
+              <h4 className="font-medium text-gray-900">RECLAMANTE</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -266,7 +266,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Cargo/Função
+                    CNAE
                   </label>
                   <input
                     type="text"
@@ -277,7 +277,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Setor/Departamento
+                    ATIVIDADE
                   </label>
                   <input
                     type="text"
@@ -302,7 +302,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
             
             {/* Parte Requerida */}
             <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-              <h4 className="font-medium text-gray-900">Parte Requerida</h4>
+              <h4 className="font-medium text-gray-900">RECLAMADA</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -318,7 +318,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Cargo/Função
+                    CNAE
                   </label>
                   <input
                     type="text"
@@ -329,7 +329,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Setor/Departamento
+                    ATIVIDADE
                   </label>
                   <input
                     type="text"
@@ -392,7 +392,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
                   />
                   <input
                     type="text"
-                    placeholder="Cargo/Função"
+                    placeholder="CNAE"
                     className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     value={participante.cargo}
                     onChange={(e) => handleParticipanteChange(index, 'cargo', e.target.value)}
@@ -419,7 +419,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção: Informações Adicionais do Processo */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              Informações Adicionais do Processo
+              IV. Informações Adicionais do Processo
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -476,7 +476,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Cargo/função exercida pelo reclamante"
+                  placeholder="Função exercida pelo reclamante"
                   value={formData.funcao_reclamante}
                   onChange={(e) => setFormData({ ...formData, funcao_reclamante: e.target.value })}
                 />
@@ -487,7 +487,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção: Checklist de Documentação */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              Checklist de Documentação a ser Verificada
+              V. Checklist de Documentação a ser Verificada
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <label className="flex items-center gap-2">
@@ -640,7 +640,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção IV: Objetivo da Perícia */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              III. Objetivo da Perícia
+              VI. Objetivo da Perícia
             </h3>
             <div className="space-y-2">
               <label className="flex items-center gap-2">
@@ -683,7 +683,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção V: Metodologia e Procedimentos */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              V. Metodologia e Procedimentos
+              VII. Metodologia e Procedimentos
             </h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -752,7 +752,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção VI: Agentes e Riscos */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              VI. Agentes Insalubres e Perigosos
+              VIII. Agentes Insalubres e Perigosos
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -809,7 +809,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção: Descrição de Ambientes e Atividades */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              Descrição de Ambientes e Atividades
+              IX. Descrição de Ambientes e Atividades
             </h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -840,7 +840,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção: Riscos Ergonômicos */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              Classificação de Riscos Ergonômicos
+              X. Classificação de Riscos Ergonômicos
             </h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -859,7 +859,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção VII: Conclusões */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              VII. Conclusões da Perícia
+              XI. Conclusões da Perícia
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
@@ -923,7 +923,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b pb-2">
               <h3 className="text-lg font-semibold text-gray-900">
-                Controle de EPIs (Equipamentos de Proteção Individual)
+                XII. Controle de EPIs (Equipamentos de Proteção Individual)
               </h3>
               <button
                 type="button"
@@ -998,7 +998,7 @@ export default function PericiaForm({ onClose, onSubmit, initialData, defaultPer
           {/* Seção VIII: Observações Finais */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              VIII. Observações Finais
+              XIII. Observações Finais
             </h3>
             <div>
               <textarea

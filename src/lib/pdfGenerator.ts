@@ -48,9 +48,48 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
   addField('Status', pericia.status?.toUpperCase());
   addField('Resumo do Caso', pericia.resumo_caso);
   
-  // II. Participantes da Perícia
+  // II. Identificação das Partes
+  const hasRequerenteData = pericia.parte_requerente || pericia.requerente_cargo || pericia.requerente_setor || pericia.requerente_endereco || pericia.requerente_telefone || pericia.requerente_email;
+  const hasRequeridaData = pericia.parte_requerida || pericia.requerida_cargo || pericia.requerida_setor || pericia.requerida_endereco || pericia.requerida_telefone || pericia.requerida_email;
+  
+  if (hasRequerenteData || hasRequeridaData) {
+    addSectionTitle('II. Identificação das Partes');
+    
+    // Requerente
+    if (hasRequerenteData) {
+      doc.setFont('helvetica', 'bold');
+      doc.text('RECLAMANTE:', 20, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      addField('Nome', pericia.parte_requerente);
+      addField('CNAE', pericia.requerente_cargo);
+      addField('ATIVIDADE', pericia.requerente_setor);
+      addField('Endereço', pericia.requerente_endereco);
+      addField('Telefone', pericia.requerente_telefone);
+      addField('E-mail', pericia.requerente_email);
+      yPos += 3;
+    }
+    
+    // Requerida
+    if (hasRequeridaData) {
+      doc.setFont('helvetica', 'bold');
+      doc.text('RECLAMADA:', 20, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      addField('Nome', pericia.parte_requerida);
+      addField('CNAE', pericia.requerida_cargo);
+      addField('ATIVIDADE', pericia.requerida_setor);
+      addField('Endereço', pericia.requerida_endereco);
+      addField('Telefone', pericia.requerida_telefone);
+      addField('E-mail', pericia.requerida_email);
+      yPos += 3;
+    }
+    yPos += 2;
+  }
+
+  // III. Participantes da Perícia
   if (pericia.participantes && pericia.participantes.length > 0) {
-    addSectionTitle('II. Participantes da Perícia');
+    addSectionTitle('III. Participantes da Perícia');
     pericia.participantes.forEach((part, index) => {
       checkPageBreak();
       doc.setFont('helvetica', 'bold');
@@ -80,11 +119,11 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 2;
   }
 
-  // Informações Adicionais do Processo
+  // IV. Informações Adicionais do Processo
   const hasInfoAdicionais = pericia.data_admissao || pericia.data_demissao || pericia.horario_pericia || pericia.local_pericia || pericia.funcao_reclamante;
   
   if (hasInfoAdicionais) {
-    addSectionTitle('Informações Adicionais do Processo');
+    addSectionTitle('IV. Informações Adicionais do Processo');
     addField('Data da Admissão', pericia.data_admissao);
     addField('Data da Demissão', pericia.data_demissao);
     addField('Horário da Perícia', pericia.horario_pericia);
@@ -93,13 +132,13 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 5;
   }
 
-  // Checklist de Documentação
+  // V. Checklist de Documentação
   if (pericia.documentacao) {
     const doc_checklist = pericia.documentacao as any;
     const hasDocumentacao = Object.values(doc_checklist).some(v => v === true);
     
     if (hasDocumentacao) {
-      addSectionTitle('Checklist de Documentação Verificada');
+      addSectionTitle('V. Checklist de Documentação Verificada');
       doc.setFontSize(9);
       if (doc_checklist.pca) doc.text('✓ PCA (Programa de Conservação Auditiva)', 25, yPos), yPos += 4;
       if (doc_checklist.ppr) doc.text('✓ PPR (Programa de Proteção Respiratória)', 25, yPos), yPos += 4;
@@ -118,9 +157,9 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     }
   }
 
-  // III. Objetivo da Perícia
+  // VI. Objetivo da Perícia
   if (pericia.objetivo_determinar_insalubridade || pericia.objetivo_determinar_periculosidade || pericia.objetivo_avaliar_exposicao || pericia.objetivo_outros) {
-    addSectionTitle('III. Objetivo da Perícia');
+    addSectionTitle('VI. Objetivo da Perícia');
     if (pericia.objetivo_determinar_insalubridade) {
       doc.text('• Determinar a existência de insalubridade', 25, yPos);
       yPos += 5;
@@ -141,51 +180,11 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 5;
   }
 
-  // IV. Identificação das Partes
-  // IV. Identificação das Partes
-  const hasRequerenteData = pericia.parte_requerente || pericia.requerente_cargo || pericia.requerente_setor || pericia.requerente_endereco || pericia.requerente_telefone || pericia.requerente_email;
-  const hasRequeridaData = pericia.parte_requerida || pericia.requerida_cargo || pericia.requerida_setor || pericia.requerida_endereco || pericia.requerida_telefone || pericia.requerida_email;
-  
-  if (hasRequerenteData || hasRequeridaData) {
-    addSectionTitle('IV. Identificação das Partes');
-    
-    // Requerente
-    if (hasRequerenteData) {
-      doc.setFont('helvetica', 'bold');
-      doc.text('Parte Requerente:', 20, yPos);
-      yPos += 5;
-      doc.setFont('helvetica', 'normal');
-      addField('Nome', pericia.parte_requerente);
-      addField('Cargo/Função', pericia.requerente_cargo);
-      addField('Setor/Departamento', pericia.requerente_setor);
-      addField('Endereço', pericia.requerente_endereco);
-      addField('Telefone', pericia.requerente_telefone);
-      addField('E-mail', pericia.requerente_email);
-      yPos += 3;
-    }
-    
-    // Requerida
-    if (hasRequeridaData) {
-      doc.setFont('helvetica', 'bold');
-      doc.text('Parte Requerida:', 20, yPos);
-      yPos += 5;
-      doc.setFont('helvetica', 'normal');
-      addField('Nome', pericia.parte_requerida);
-      addField('Cargo/Função', pericia.requerida_cargo);
-      addField('Setor/Departamento', pericia.requerida_setor);
-      addField('Endereço', pericia.requerida_endereco);
-      addField('Telefone', pericia.requerida_telefone);
-      addField('E-mail', pericia.requerida_email);
-      yPos += 3;
-    }
-    yPos += 2;
-  }
-
-  // V. Metodologia e Procedimentos
+  // VII. Metodologia e Procedimentos
   const hasMetodologia = pericia.metodo_inspecao_local || pericia.metodo_medicoes_ambientais || pericia.metodo_analise_documentos || pericia.metodo_entrevistas || pericia.metodo_outros || pericia.procedimentos_avaliacao;
   
   if (hasMetodologia) {
-    addSectionTitle('V. Metodologia e Procedimentos');
+    addSectionTitle('VII. Metodologia e Procedimentos');
     
     if (pericia.metodo_inspecao_local || pericia.metodo_medicoes_ambientais || pericia.metodo_analise_documentos || pericia.metodo_entrevistas || pericia.metodo_outros) {
       doc.setFont('helvetica', 'bold');
@@ -220,11 +219,11 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 5;
   }
 
-  // V. Agentes Insalubres e Perigosos
+  // VIII. Agentes Insalubres e Perigosos
   const hasAgentes = pericia.agentes_quimicos || pericia.agentes_fisicos || pericia.agentes_biologicos || pericia.condicoes_perigosas;
   
   if (hasAgentes) {
-    addSectionTitle('V. Agentes Insalubres e Perigosos');
+    addSectionTitle('VIII. Agentes Insalubres e Perigosos');
     addField('Agentes Químicos', pericia.agentes_quimicos);
     addField('Agentes Físicos', pericia.agentes_fisicos);
     addField('Agentes Biológicos', pericia.agentes_biologicos);
@@ -232,26 +231,26 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 5;
   }
 
-  // Descrição de Ambientes e Atividades
+  // IX. Descrição de Ambientes e Atividades
   if (pericia.descricao_ambientes || pericia.descricao_atividades) {
-    addSectionTitle('Descrição de Ambientes e Atividades');
+    addSectionTitle('IX. Descrição de Ambientes e Atividades');
     addField('Descrição dos Ambientes de Trabalho', pericia.descricao_ambientes);
     addField('Descrição das Atividades Realizadas', pericia.descricao_atividades);
     yPos += 5;
   }
 
-  // Classificação de Riscos Ergonômicos
+  // X. Classificação de Riscos Ergonômicos
   if (pericia.riscos_ergonomicos) {
-    addSectionTitle('Classificação de Riscos Ergonômicos');
+    addSectionTitle('X. Classificação de Riscos Ergonômicos');
     addField('Detalhamento dos Riscos Ergonômicos', pericia.riscos_ergonomicos);
     yPos += 5;
   }
 
-  // VI. Conclusões da Perícia
+  // XI. Conclusões da Perícia
   const hasConclusoes = pericia.existe_insalubridade === true || pericia.existe_periculosidade === true || !!pericia.parecer_perito;
   
   if (hasConclusoes) {
-    addSectionTitle('VI. Conclusões da Perícia');
+    addSectionTitle('XI. Conclusões da Perícia');
     if (pericia.existe_insalubridade === true) {
       addField('Insalubridade', `SIM - ${pericia.grau_insalubridade?.toUpperCase()}`);
     }
@@ -262,9 +261,9 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 5;
   }
 
-  // Controle de EPIs
+  // XII. Controle de EPIs
   if (pericia.epis && pericia.epis.length > 0) {
-    addSectionTitle('Controle de EPIs (Equipamentos de Proteção Individual)');
+    addSectionTitle('XII. Controle de EPIs (Equipamentos de Proteção Individual)');
     pericia.epis.forEach((epi: any, index: number) => {
       checkPageBreak();
       doc.setFont('helvetica', 'bold');
@@ -288,9 +287,9 @@ export const generatePericiaPDF = (pericia: Pericia, userName?: string) => {
     yPos += 3;
   }
 
-  // VII. Observações Finais
+  // XIII. Observações Finais
   if (pericia.observacoes_finais) {
-    addSectionTitle('VII. Observações Finais');
+    addSectionTitle('XIII. Observações Finais');
     addField('', pericia.observacoes_finais);
     yPos += 5;
   }

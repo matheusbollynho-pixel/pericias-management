@@ -142,22 +142,23 @@ export default function Dashboard({ userEmail }: DashboardProps) {
         </div>
       ) : (
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Processo</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Vara</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Partes</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-                <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPericias.map((pericia) => (
-                <tr key={pericia.id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-6 py-3 text-sm text-gray-900">{pericia.processo_numero || pericia.processo}</td>
-                  <td className="px-6 py-3 text-sm text-gray-600">{pericia.vara}</td>
-                  <td className="px-6 py-3 text-sm text-gray-600">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[600px]">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Processo</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Vara</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Partes</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
+                  <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPericias.map((pericia) => (
+                  <tr key={pericia.id} className="border-b border-gray-200 hover:bg-gray-50">
+                    <td className="px-6 py-3 text-sm text-gray-900">{pericia.processo_numero || pericia.processo}</td>
+                    <td className="px-6 py-3 text-sm text-gray-600">{pericia.vara}</td>
+                    <td className="px-6 py-3 text-sm text-gray-600">
                     {pericia.parte}
                   </td>
                   <td className="px-6 py-3">
