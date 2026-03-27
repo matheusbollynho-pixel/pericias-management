@@ -158,52 +158,51 @@ export default function Dashboard({ userEmail }: DashboardProps) {
                   <tr key={pericia.id} className="border-b border-gray-200 hover:bg-gray-50">
                     <td className="px-6 py-3 text-sm text-gray-900">{pericia.processo_numero || pericia.processo}</td>
                     <td className="px-6 py-3 text-sm text-gray-600">{pericia.vara}</td>
-                    <td className="px-6 py-3 text-sm text-gray-600">
-                    {pericia.parte}
-                  </td>
-                  <td className="px-6 py-3">
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                      pericia.status === 'andamento' ? 'bg-blue-100 text-blue-800' :
-                      pericia.status === 'concluida' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {pericia.status === 'andamento' ? 'Em Andamento' :
-                       pericia.status === 'concluida' ? 'Concluída' :
-                       'Arquivada'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => generatePericiaPDF(pericia, peritoNome)}
-                        className="text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-full transition-colors"
-                        title="Imprimir PDF"
-                      >
-                        <Printer className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEditingPericia(pericia);
-                          setShowForm(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded-full transition-colors"
-                        title="Editar Perícia"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(pericia)}
-                        className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-full transition-colors"
-                        title="Excluir Perícia"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <td className="px-6 py-3 text-sm text-gray-600">{pericia.parte}</td>
+                    <td className="px-6 py-3">
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                        pericia.status === 'andamento' ? 'bg-blue-100 text-blue-800' :
+                        pericia.status === 'concluida' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {pericia.status === 'andamento' ? 'Em Andamento' :
+                        pericia.status === 'concluida' ? 'Concluída' :
+                        'Arquivada'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => generatePericiaPDF(pericia, peritoNome)}
+                          className="text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                          title="Imprimir PDF"
+                        >
+                          <Printer className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setEditingPericia(pericia);
+                            setShowForm(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded-full transition-colors"
+                          title="Editar Perícia"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(pericia)}
+                          className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-full transition-colors"
+                          title="Excluir Perícia"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
